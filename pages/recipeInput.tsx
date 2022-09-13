@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 
 type RecipeStep = {
     recipeStepText: string;
@@ -13,6 +14,8 @@ type Ingredient = {
 }
 
 const RecipeInput = () => {
+
+    const router = useRouter()
 
     const [tempRecipeStep, setTempRecipeStep] = useState<string>('')
     const [tempRecipeStepArray, setTempRecipeStepArray] = useState<RecipeStep[]>([])
@@ -67,6 +70,8 @@ const RecipeInput = () => {
         </div>
 
         <input placeholder="Recipe Name" onChange={(e) => setTempRecipeName(e.target.value)}></input>
+
+        <button onClick={() => router.push('/recipeList')}>To Recipe Input</button>
     </>
         
 
