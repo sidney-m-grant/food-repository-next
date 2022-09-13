@@ -1,20 +1,11 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-
-type RecipeStep = {
-    recipeStepText: string;
-    recipeStepNumber: number;
-}
-
-type Ingredient = {
-    ingredientName: string;
-    ingredientAmount: string;
-    ingredientUnit: string;
-    ingredientId: number;
-}
+import { Recipe, RecipeStep, Ingredient, useRecipeList } from '../context/RecipeListContext'
+import { addDoc } from 'firebase/firestore'
 
 const RecipeInput = () => {
 
+    const { allRecipes, recipesCollectionRef } = useRecipeList()
     const router = useRouter()
 
     const [tempRecipeStep, setTempRecipeStep] = useState<string>('')
@@ -26,6 +17,8 @@ const RecipeInput = () => {
     const [tempIngredientArray, setTempIngredientArray] = useState<Ingredient[]>([])
 
     const [tempRecipeName, setTempRecipeName] = useState('')
+
+    const [tempRecipe, setTempRecipe] = useState<Recipe>()
 
     const handleAddTempRecipeStep = () => {
         const objectToAdd: RecipeStep = {
@@ -53,6 +46,22 @@ const RecipeInput = () => {
         return <p key={ingredient.ingredientId}>{ingredient.ingredientName} {ingredient.ingredientAmount} {ingredient.ingredientUnit}</p>
     })
 
+    const saveTempRecipe = () => {
+        const newRecipe: Recipe = {
+            recipeName: tempRecipeName,
+            recipeId: allRecipes.length,
+            recipeImg: '',
+            recipeText: tempRecipeStepArray,
+            ingredientList: tempIngredientArray,
+        }
+        setTempRecipe(newRecipe)
+    }
+
+    const uploadFinishedRecipe = async () => {
+        await addDoc(recipesCollectionRef, tempRecipe)
+    }
+
+
   return (
     <>
         <div>
@@ -71,7 +80,10 @@ const RecipeInput = () => {
 
         <input placeholder="Recipe Name" onChange={(e) => setTempRecipeName(e.target.value)}></input>
 
-        <button onClick={() => router.push('/recipeList')}>To Recipe Input</button>
+        <button onClick={() => router.push('/recipeList')}>To Recipe List</button>
+
+        <button onClick={saveTempRecipe}>Save Temp Recipe</button>
+        <button onClick={uploadFinishedRecipe}>Upload Finished Recipe</button>
     </>
         
 
