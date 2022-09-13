@@ -18,7 +18,7 @@ export type Recipe = {
   recipeName: string;
   recipeId: number;
   recipeImg: string;
-  recipeText: RecipeStep[];
+  recipeStepList: RecipeStep[];
   ingredientList: Ingredient[];
 }
 
@@ -31,6 +31,7 @@ export const RecipeListContextProvider = ({children }: {children: React.ReactNod
     const recipesCollectionRef = collection(db, 'Recipes')
 
     const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
+    const [currentRecipe, setCurrentRecipe] = useState<Recipe>();
 
     useEffect(() => {
         const getRecipes = async () => {
@@ -44,7 +45,7 @@ export const RecipeListContextProvider = ({children }: {children: React.ReactNod
                     recipeName: recipe.recipeName,
                     recipeImg: recipe.recipeImg,
                     recipeId: recipe.recipeId,
-                    recipeText: recipe.recipeStepList,
+                    recipeStepList: recipe.recipeStepList,
                     ingredientList: recipe.ingredientList,
                 }
                 recipeArray.push(temp)
@@ -55,7 +56,7 @@ export const RecipeListContextProvider = ({children }: {children: React.ReactNod
     }, [])
 
   return (
-    <RecipeListContext.Provider value={{allRecipes, recipesCollectionRef }}>
+    <RecipeListContext.Provider value={{ allRecipes, recipesCollectionRef, currentRecipe, setCurrentRecipe }}>
           {children}
     </RecipeListContext.Provider>
   )

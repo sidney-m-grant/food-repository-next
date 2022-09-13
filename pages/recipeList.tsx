@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import SignOutButton from '../components/SignOutButton'
 import { useRouter } from 'next/router'
-import { db } from '../firebase'
-import { collection, getDocs } from 'firebase/firestore'
-import { RecipeStep, Ingredient, Recipe, useRecipeList } from '../context/RecipeListContext'
+import { Recipe, useRecipeList } from '../context/RecipeListContext'
+import CurrentRecipe from '../components/CurrentRecipe'
+import IndividualRecipe from '../components/IndividualRecipe'
 
 export const RecipeList = () => {
 
     const router = useRouter()
 
-    const { allRecipes } = useRecipeList();
+    const { allRecipes, currentRecipe } = useRecipeList();
 
-    const listItems = allRecipes.map((item: Recipe) => {
-        return <h5 key={item.recipeId}>{item.recipeName}</h5>
+    const listItems = allRecipes.map((recipe: Recipe) => {
+        return <IndividualRecipe recipe={recipe} key={recipe.recipeId} />
     })
 
     return (
         <div>
+            {currentRecipe ? <CurrentRecipe /> : null}
             <SignOutButton />
             <button onClick={() => router.push('/recipeInput')}>To Recipe Input</button>
             {listItems}

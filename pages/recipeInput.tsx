@@ -51,7 +51,7 @@ const RecipeInput = () => {
             recipeName: tempRecipeName,
             recipeId: allRecipes.length,
             recipeImg: '',
-            recipeText: tempRecipeStepArray,
+            recipeStepList: tempRecipeStepArray,
             ingredientList: tempIngredientArray,
         }
         setTempRecipe(newRecipe)
