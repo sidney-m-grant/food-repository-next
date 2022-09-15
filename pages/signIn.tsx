@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/router'
+import { setDoc, doc, } from 'firebase/firestore'
+import { db } from '../firebase'
 
 export default function signIn() {
     const { user, signup, login, logout } = useAuth()
@@ -15,7 +17,18 @@ export default function signIn() {
     const registerNewUser = async () => {
         try {
             await signup(registerEmail, registerPassword)
-            console.log(user)
+            const socialCollection = {
+                name: 'social'
+            }
+            const recipeCollection = {
+                name: 'recipe'
+            }
+            const friendRequestArray = {
+                friendRequests: []
+            }
+            await setDoc(doc(db, registerEmail, "social"), socialCollection)
+            await setDoc(doc(db, registerEmail, "social", "socialItems", "friendRequestArray"), friendRequestArray)
+            await setDoc(doc(db, registerEmail, "recipeCollection"), recipeCollection)
             router.push('/recipeList')
         } catch(error) {
             console.log(error)

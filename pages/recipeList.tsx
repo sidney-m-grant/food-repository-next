@@ -20,6 +20,7 @@ export const RecipeList = () => {
             {currentRecipe ? <CurrentRecipe /> : null}
             <SignOutButton />
             <button onClick={() => router.push('/recipeInput')}>To Recipe Input</button>
+            <button onClick={() => router.push('/social')}>To Social</button>
             {listItems}
         </div>
     )

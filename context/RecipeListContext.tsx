@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, createContext } from 'react'
 import { db } from '../firebase'
 import { collection, getDocs } from 'firebase/firestore'
+import { useAuth } from './AuthContext'
 
 export type RecipeStep = {
   recipeStepText: string;
@@ -17,7 +18,6 @@ export type Ingredient = {
 export type Recipe = {
   recipeName: string;
   recipeId: number;
-  recipeImg: string;
   recipeStepList: RecipeStep[];
   ingredientList: Ingredient[];
 }
@@ -28,7 +28,10 @@ export const useRecipeList: any = () => useContext(RecipeListContext)
 
 export const RecipeListContextProvider = ({children }: {children: React.ReactNode}) => {
 
-    const recipesCollectionRef = collection(db, 'Recipes')
+    const { user } = useAuth()
+
+    const userCollectionRef = collection(db, `${user?.email}`)
+    const recipesCollectionRef = collection(db, `${user?.email}`, 'recipeCollection', 'recipes' )
 
     const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
     const [currentRecipe, setCurrentRecipe] = useState<Recipe>();
@@ -43,7 +46,6 @@ export const RecipeListContextProvider = ({children }: {children: React.ReactNod
             tempArray.forEach((recipe) => {
                 const temp: Recipe = {
                     recipeName: recipe.recipeName,
-                    recipeImg: recipe.recipeImg,
                     recipeId: recipe.recipeId,
                     recipeStepList: recipe.recipeStepList,
                     ingredientList: recipe.ingredientList,
@@ -53,10 +55,10 @@ export const RecipeListContextProvider = ({children }: {children: React.ReactNod
             setAllRecipes(recipeArray)
         }
         getRecipes()
-    }, [])
+    }, [user?.email])
 
   return (
-    <RecipeListContext.Provider value={{ allRecipes, recipesCollectionRef, currentRecipe, setCurrentRecipe }}>
+    <RecipeListContext.Provider value={{ allRecipes, userCollectionRef, currentRecipe, setCurrentRecipe }}>
           {children}
     </RecipeListContext.Provider>
   )

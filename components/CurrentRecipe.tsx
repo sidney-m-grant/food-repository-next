@@ -1,7 +1,5 @@
 import React from 'react'
-import { Recipe, RecipeStep, Ingredient, useRecipeList } from '../context/RecipeListContext'
-
-
+import { RecipeStep, Ingredient, useRecipeList } from '../context/RecipeListContext'
 
 const CurrentRecipe= () => {
 
