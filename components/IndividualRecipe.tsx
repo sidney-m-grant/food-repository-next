@@ -1,12 +1,12 @@
 import React from 'react'
-import { Recipe, useRecipeList } from '../context/RecipeListContext'
+import type { Recipe } from '../pages/recipeList'
 
 interface Props{
     recipe: Recipe
+    setCurrentRecipe: React.Dispatch<React.SetStateAction<Recipe | undefined>>
 }
 
-const IndividualRecipe: React.FC<Props> = ({ recipe }) => {
-    const { setCurrentRecipe } = useRecipeList();
+const IndividualRecipe: React.FC<Props> = ({ recipe, setCurrentRecipe }) => {
 
   return (
     <>

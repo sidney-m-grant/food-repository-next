@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { Recipe, RecipeStep, Ingredient, useRecipeList } from '../context/RecipeListContext'
+import type { Recipe, RecipeStep, Ingredient } from '../pages/recipeList'
 import { addDoc, collection } from 'firebase/firestore'
 import { useAuth } from '../context/AuthContext' 
 import { db } from '../firebase'
 
 const RecipeInput = () => {
 
-    const { allRecipes } = useRecipeList()
     const { user } = useAuth()
     const router = useRouter()
 
@@ -58,7 +57,6 @@ const RecipeInput = () => {
     const saveTempRecipe = () => {
         const newRecipe: Recipe = {
             recipeName: tempRecipeName,
-            recipeId: allRecipes.length,
             recipeStepList: tempRecipeStepArray,
             ingredientList: tempIngredientArray,
         }

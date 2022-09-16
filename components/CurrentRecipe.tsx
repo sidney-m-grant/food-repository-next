@@ -1,9 +1,11 @@
 import React from 'react'
-import { RecipeStep, Ingredient, useRecipeList } from '../context/RecipeListContext'
+import type { Recipe, RecipeStep, Ingredient } from '../pages/recipeList'
 
-const CurrentRecipe= () => {
+interface Props {
+  currentRecipe: Recipe
+}
 
-    const { currentRecipe } = useRecipeList()
+const CurrentRecipe: React.FC<Props> = ({ currentRecipe }) => {
 
     const listRecipeSteps = currentRecipe.recipeStepList.map((item: RecipeStep) => {
         return <h5 key={item.recipeStepNumber}>{item.recipeStepNumber}. {item.recipeStepText}</h5>
