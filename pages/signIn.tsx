@@ -26,8 +26,12 @@ export default function signIn() {
             const friendRequestArray = {
                 friendRequests: []
             }
+            const friendListArray = {
+                friendList: []
+            }
             await setDoc(doc(db, registerEmail, "social"), socialCollection)
             await setDoc(doc(db, registerEmail, "social", "socialItems", "friendRequestArray"), friendRequestArray)
+            await setDoc(doc(db, registerEmail, "social", "socialItems", "friendListArray"), friendListArray)
             await setDoc(doc(db, registerEmail, "recipeCollection"), recipeCollection)
             router.push('/recipeList')
         } catch(error) {

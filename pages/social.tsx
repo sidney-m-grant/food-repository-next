@@ -3,6 +3,7 @@ import { db } from '../firebase'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/router'
+import FriendRequest from '../components/FriendRequest'
 
 
 const social = () => {
@@ -14,8 +15,12 @@ const social = () => {
     const [listOfFriends, setListOfFriends] = useState<string[]>([])
     const [listOfFriendRequests, setListOfFriendRequests] = useState<string[]>([])
 
-    const uploadFriendRequestUpdate = async ( friendRequestArray: object ) => {
-        await setDoc(doc(db, friendRequestInput, "social", "socialItems", "friendRequestArray"), friendRequestArray)
+    const uploadFriendRequestUpdate = async ( user:string, friendRequestArray: object ) => {
+        await setDoc(doc(db, `${user}`, "social", "socialItems", "friendRequestArray"), friendRequestArray)
+    }
+
+    const uploadFriendListUpdate = async ( user: string, friendListArray: object ) => {
+      await setDoc(doc(db, `${user}`, "social", "socialItems", "friendListArray"), friendListArray)
     }
 
     const sendFriendRequest = async () => {
@@ -28,14 +33,30 @@ const social = () => {
             const objectToUpload = {
                 friendRequests: friendRequestArray
             }
-            uploadFriendRequestUpdate(objectToUpload)
+            uploadFriendRequestUpdate(friendRequestInput, objectToUpload)
         }
+    }
+
+    const acceptFriendRequest = async ( friend:string ) => {
+      const friendsRequestObject = await getDoc(doc(db, `${user?.email}`, "social", "socialItems", "friendRequestArray"))
+      let friendRequestArray: string[] = friendsRequestObject.data()?.friendRequests.filter((request: string) => request !== friend)
+      const friendsObject = await getDoc(doc(db, `${user?.email}`, "social", "socialItems", "friendListArray"))
+      let friendsArray: string[] = friendsObject.data()?.friendList
+      friendsArray.push(friend)
+      const friendsFriendListObject = await getDoc(doc(db, `${friend}`, "social", "socialItems", "friendListArray"))
+      let friendsFriendListArray: string[] = friendsFriendListObject.data()?.friendList
+      friendsFriendListArray.push(user.email) 
+      setListOfFriends(friendsArray)
+      setListOfFriendRequests(friendRequestArray)
+      uploadFriendRequestUpdate(user?.email, {friendRequests: friendRequestArray})
+      uploadFriendListUpdate(friend, {friendList: friendsFriendListArray})
+      uploadFriendListUpdate(user?.email, {friendList, friendsArray})
     }
 
     useEffect(() => {
       const getFriendList = async () => {
-        const friendListObject = await getDoc(doc(db, user?.email, "social", "socialItems", "friendList"))
-        const friendListArray = friendListObject.data()?.friendRequests
+        const friendListObject = await getDoc(doc(db, user?.email, "social", "socialItems", "friendListArray"))
+        const friendListArray = friendListObject.data()?.friendList
         setListOfFriends(friendListArray)
       }
       getFriendList()
@@ -50,9 +71,13 @@ const social = () => {
         getFriendRequestList()
       }, [])
     
-    const friendRequestList = listOfFriendRequests.map((request) => {
-        return <h5 key={listOfFriendRequests.indexOf(request)}>{request}</h5>
-    })
+    const friendRequestList = listOfFriendRequests.map((request: string) => {
+      return <FriendRequest key={listOfFriendRequests.indexOf(request)} request={request} acceptFriendRequest={acceptFriendRequest}/>
+    }) 
+
+    const friendList = listOfFriends.map((friend) => {
+      return <h5 key={listOfFriends.indexOf(friend)}>{friend}</h5>
+  })
 
   return (
     <>
@@ -63,6 +88,7 @@ const social = () => {
             <button onClick={() => router.push('/recipeList')}>To Recipe List</button>
         </div>
         {friendRequestList}
+        {friendList}
     </>
   )
 }
