@@ -4,6 +4,7 @@ import type { Recipe, RecipeStep, Ingredient } from '../pages/recipeList'
 import { addDoc, collection } from 'firebase/firestore'
 import { useAuth } from '../context/AuthContext' 
 import { db } from '../firebase'
+import SignOutButton from '../components/SignOutButton'
 
 const RecipeInput = () => {
 
@@ -69,26 +70,36 @@ const RecipeInput = () => {
 
   return (
     <>
-        <div>
-            <textarea placeholder="Recipe Text" onChange={(e) => setTempRecipeStep(e.target.value)} ></textarea>
+        <div className="recipe-step-input-container">
+            <textarea className="recipe-step-input" placeholder="Recipe Text" onChange={(e) => setTempRecipeStep(e.target.value)} ></textarea>
             <button onClick={handleAddTempRecipeStep}>Add Recipe Step</button>
-            {recipeStepListItems}
+            
         </div>
-
         <div>
             <input placeholder="Ingredient Name" onChange={(e) => setTempIngredientName(e.target.value)} ></input>
             <input placeholder="Ingredient Amount" onChange={(e) => setTempIngredientAmount(e.target.value)} ></input>
             <input placeholder="Ingredient Unit" onChange={(e) => setTempIngredientUnit(e.target.value)} ></input>
             <button onClick={handleAddTempIngredient}>Add Ingredient</button>
-            {ingredientListItems}
+        </div>
+
+        <div className="recipe-container">
+            <div className="ingredient-list">
+                {ingredientListItems}
+            </div>
+            <div className="recipe-steps">
+                 {recipeStepListItems}
+            </div>
         </div>
 
         <input placeholder="Recipe Name" onChange={(e) => setTempRecipeName(e.target.value)}></input>
 
-        <button onClick={() => router.push('/recipeList')}>To Recipe List</button>
-        <button onClick={() => router.push('/social')}>To Social</button>
-
         <button onClick={saveTempRecipe}>Save Temp Recipe</button>
+
+        <div>
+            <button onClick={() => router.push('/recipeList')}>To Recipe List</button>
+            <button onClick={() => router.push('/social')}>To Social</button>
+            <SignOutButton />
+        </div>
     </>
   )
 }

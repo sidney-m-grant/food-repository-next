@@ -9,10 +9,10 @@ interface Props{
 const IndividualRecipe: React.FC<Props> = ({ recipe, setCurrentRecipe }) => {
 
   return (
-    <>
-        <h5>{recipe.recipeName}</h5>
+    <div className="individual-recipe">
+        <h5 style={{ display: 'inline-block' }}>{recipe.recipeName}</h5>
         <button onClick={() => setCurrentRecipe(recipe)}>Set as Current Recipe</button>
-    </>
+    </div>
   )
 }
 

@@ -16,10 +16,14 @@ const CurrentRecipe: React.FC<Props> = ({ currentRecipe }) => {
     }) 
 
   return (
-    <div>
+    <div className="recipe-container">
         {currentRecipe.recipeName}
-        {listRecipeSteps}
-        {listIngredients}
+        <div className="ingredient-list">
+          {listIngredients}
+        </div>
+        <div className="recipe-steps">
+          {listRecipeSteps}
+        </div>
     </div>
   )
 }

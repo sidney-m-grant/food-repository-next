@@ -6,6 +6,7 @@ import IndividualRecipe from '../components/IndividualRecipe'
 import { getDoc, doc, getDocs, collection } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from '../context/AuthContext'
+import RadioOption from '../components/RadioOption'
 
 export type RecipeStep = {
     recipeStepText: string;
@@ -72,27 +73,22 @@ export const RecipeList = () => {
     })
 
     const listFriendRadioOptions = listOfFriends.map((friend: string) => {
-        return (
-            <>
-                <label key={listOfFriends.indexOf(friend)}>
-                    <input type="radio" value={friend} name="friend-radio" onChange={(e) => setSelectedOption(e.target.value)}/> 
-                    {friend}
-                </label>
-            </>
-        )
+        return <RadioOption friend={friend} key={listOfFriends.indexOf(friend)} setSelectedOption={setSelectedOption} ></RadioOption>
     })
 
     return (
     <>
         <div>
             {currentRecipe ? <CurrentRecipe currentRecipe={currentRecipe}/> : null}
-            <SignOutButton />
-            <button onClick={() => router.push('/recipeInput')}>To Recipe Input</button>
-            <button onClick={() => router.push('/social')}>To Social</button>
             {listItems}
         </div>
         <div>
             {listFriendRadioOptions}
+        </div>
+        <div>
+            <button onClick={() => router.push('/recipeInput')}>To Recipe Input</button>
+            <button onClick={() => router.push('/social')}>To Social</button>
+            <SignOutButton />
         </div>
     </>
     )

@@ -4,6 +4,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/router'
 import FriendRequest from '../components/FriendRequest'
+import SignOutButton from '../components/SignOutButton'
 
 
 const social = () => {
@@ -50,7 +51,7 @@ const social = () => {
       setListOfFriendRequests(friendRequestArray)
       uploadFriendRequestUpdate(user?.email, {friendRequests: friendRequestArray})
       uploadFriendListUpdate(friend, {friendList: friendsFriendListArray})
-      uploadFriendListUpdate(user?.email, {friendList, friendsArray})
+      uploadFriendListUpdate(user?.email, {friendList: friendsArray})
     }
 
     useEffect(() => {
@@ -84,11 +85,15 @@ const social = () => {
         <div>
             <input placeholder="input a friends email" onChange={(e) => {setFriendRequestInput(e.target.value)}}></input>
             <button onClick={sendFriendRequest}>Send Friend Request</button>
-            <button onClick={() => router.push('/recipeInput')}>To Recipe Input</button>
-            <button onClick={() => router.push('/recipeList')}>To Recipe List</button>
+            
         </div>
         {friendRequestList}
         {friendList}
+        <div>
+            <button onClick={() => router.push('/recipeInput')}>To Recipe Input</button>
+            <button onClick={() => router.push('/recipeList')}>To Recipe List</button>
+            <SignOutButton />
+        </div>
     </>
   )
 }
