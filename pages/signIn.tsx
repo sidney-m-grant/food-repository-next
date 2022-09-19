@@ -59,7 +59,9 @@ export default function signIn() {
 
   return (
     <div>
-
+        <div>
+            {user?.email ? user.email : "not signed in"}
+        </div>
         <div>
             <h3>Register New User</h3>
             <input placeholder="Email" onChange={(e) => {

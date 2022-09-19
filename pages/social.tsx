@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/router'
 import FriendRequest from '../components/FriendRequest'
 import SignOutButton from '../components/SignOutButton'
+import Link from 'next/link'
 
 
 const social = () => {
@@ -87,11 +88,24 @@ const social = () => {
             <button onClick={sendFriendRequest}>Send Friend Request</button>
             
         </div>
-        {friendRequestList}
-        {friendList}
+
+        <div className="social-list">
+          <h5>Friend Requests</h5>
+           {friendRequestList}
+        </div>
+        <div className="social-list">
+          <h5>Friend List</h5>
+          {friendList}
+        </div>
+        
         <div>
-            <button onClick={() => router.push('/recipeInput')}>To Recipe Input</button>
-            <button onClick={() => router.push('/recipeList')}>To Recipe List</button>
+          <Link href="/recipeList">
+              <button>To Recipe List</button>
+          </Link>
+          <Link href="/social">
+              <button>To Social</button>
+          </Link>
+
             <SignOutButton />
         </div>
     </>

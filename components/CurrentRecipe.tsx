@@ -12,7 +12,7 @@ const CurrentRecipe: React.FC<Props> = ({ currentRecipe }) => {
     }) 
 
     const listIngredients = currentRecipe.ingredientList.map((ingredient: Ingredient) => {
-        return <h5 key={ingredient.ingredientId}>{ingredient.ingredientName} {ingredient.ingredientUnit} {ingredient.ingredientAmount}</h5>
+        return <h5 key={ingredient.ingredientId}>* {ingredient.ingredientAmount}  {ingredient.ingredientUnit}  {ingredient.ingredientName}</h5>
     }) 
 
   return (
