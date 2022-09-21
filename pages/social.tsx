@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { db } from '../firebase'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, getDocs, setDoc, collection } from 'firebase/firestore'
 import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/router'
 import FriendRequest from '../components/FriendRequest'
@@ -26,33 +26,45 @@ const social = () => {
     }
 
     const sendFriendRequest = async () => {
-        const friendsRequestObject = await getDoc(doc(db, friendRequestInput, "social", "socialItems", "friendRequestArray"))
-        let friendRequestArray = friendsRequestObject.data()?.friendRequests;
-        if (listOfFriends.includes(friendRequestInput)) {
-            return
-        } else {
-            friendRequestArray.push(`${user?.email}`)
-            const objectToUpload = {
-                friendRequests: friendRequestArray
+        const checkIfFriendExists = await getDocs(collection(db, friendRequestInput))
+        if (!checkIfFriendExists.empty) {
+            const friendsRequestObject = await getDoc(doc(db, friendRequestInput, "social", "socialItems", "friendRequestArray"))
+            let friendRequestArray = friendsRequestObject.data()?.friendRequests;
+            if (listOfFriends.includes(friendRequestInput)) {
+                alert('friend request sent previously')
+                return
+            } else {
+                friendRequestArray.push(`${user?.email}`)
+                const objectToUpload = {
+                    friendRequests: friendRequestArray
+                }
+                uploadFriendRequestUpdate(friendRequestInput, objectToUpload)
+                alert('friend request sent')
             }
-            uploadFriendRequestUpdate(friendRequestInput, objectToUpload)
+        } else {
+            alert('user does not exist')
         }
     }
 
     const acceptFriendRequest = async ( friend:string ) => {
-      const friendsRequestObject = await getDoc(doc(db, `${user?.email}`, "social", "socialItems", "friendRequestArray"))
-      let friendRequestArray: string[] = friendsRequestObject.data()?.friendRequests.filter((request: string) => request !== friend)
-      const friendsObject = await getDoc(doc(db, `${user?.email}`, "social", "socialItems", "friendListArray"))
-      let friendsArray: string[] = friendsObject.data()?.friendList
-      friendsArray.push(friend)
-      const friendsFriendListObject = await getDoc(doc(db, `${friend}`, "social", "socialItems", "friendListArray"))
-      let friendsFriendListArray: string[] = friendsFriendListObject.data()?.friendList
-      friendsFriendListArray.push(user.email) 
-      setListOfFriends(friendsArray)
-      setListOfFriendRequests(friendRequestArray)
-      uploadFriendRequestUpdate(user?.email, {friendRequests: friendRequestArray})
-      uploadFriendListUpdate(friend, {friendList: friendsFriendListArray})
-      uploadFriendListUpdate(user?.email, {friendList: friendsArray})
+      try {
+          const friendsRequestObject = await getDoc(doc(db, `${user?.email}`, "social", "socialItems", "friendRequestArray"))
+          let friendRequestArray: string[] = friendsRequestObject.data()?.friendRequests.filter((request: string) => request !== friend)
+          const friendsObject = await getDoc(doc(db, `${user?.email}`, "social", "socialItems", "friendListArray"))
+          let friendsArray: string[] = friendsObject.data()?.friendList
+          friendsArray.push(friend)
+          const friendsFriendListObject = await getDoc(doc(db, `${friend}`, "social", "socialItems", "friendListArray"))
+          let friendsFriendListArray: string[] = friendsFriendListObject.data()?.friendList
+          friendsFriendListArray.push(user.email) 
+          setListOfFriends(friendsArray)
+          setListOfFriendRequests(friendRequestArray)
+          uploadFriendRequestUpdate(user?.email, {friendRequests: friendRequestArray})
+          uploadFriendListUpdate(friend, {friendList: friendsFriendListArray})
+          uploadFriendListUpdate(user?.email, {friendList: friendsArray})
+          alert('friend request accepted')
+      } catch {
+        alert('something went wrong')
+      }
     }
 
     useEffect(() => {
@@ -83,10 +95,9 @@ const social = () => {
 
   return (
     <>
-        <div>
+        <div style={{ margin: 10, padding: 10 }}>
             <input placeholder="input a friends email" onChange={(e) => {setFriendRequestInput(e.target.value)}}></input>
             <button onClick={sendFriendRequest}>Send Friend Request</button>
-            
         </div>
 
         <div className="social-list">
@@ -98,7 +109,7 @@ const social = () => {
           {friendList}
         </div>
         
-        <div>
+        <div style={{ margin: 10, padding: 10 }}>
           <Link href="/recipeList">
               <button>To Recipe List</button>
           </Link>
@@ -106,7 +117,7 @@ const social = () => {
               <button>To Social</button>
           </Link>
 
-            <SignOutButton />
+          <SignOutButton />
         </div>
     </>
   )

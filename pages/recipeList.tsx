@@ -3,7 +3,7 @@ import SignOutButton from '../components/SignOutButton'
 import { useRouter } from 'next/router'
 import CurrentRecipe from '../components/CurrentRecipe'
 import IndividualRecipe from '../components/IndividualRecipe'
-import { getDoc, doc, getDocs, collection } from 'firebase/firestore'
+import { getDoc, doc, getDocs, collection, deleteDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from '../context/AuthContext'
 import RadioOption from '../components/RadioOption'
@@ -35,6 +35,7 @@ export const RecipeList = () => {
     const router = useRouter()
     const { user } = useAuth()
 
+    // this empty recipe just prevents type errors
     const dummyRecipe: Recipe = {
         recipeName: '',
         recipeStepList: [{
@@ -55,7 +56,10 @@ export const RecipeList = () => {
     const [currentRecipe, setCurrentRecipe] = useState<Recipe>(dummyRecipe);
     const [editedRecipe, setEditedRecipe] = useState<Recipe>(dummyRecipe);
     const [searchInput, setSearchInput] = useState<string>("");
+    const [recipeToDelete, setRecipeToDelete] = useState<Recipe>(dummyRecipe)
 
+    // on rendering, fetch the users friend list users email is already contained in the friend list at index 0
+    // must stay in the array in order to have your own recipes available as a radio option
     useEffect(() => {
         const getFriendList = async () => {
           const friendListObject = await getDoc(doc(db, user?.email, "social", "socialItems", "friendListArray"))
@@ -66,6 +70,8 @@ export const RecipeList = () => {
         getFriendList()
       }, [])
 
+      // fetch recipe list from a user based on radio input of the user and his friends
+      // also attaches the auto generated docId from firestore to each recipe for use when editing
     useEffect(() => {
         const getRecipes = async () => {
             const recipes = await getDocs(collection(db, selectedOption, 'recipeCollection', 'recipes'))
@@ -86,6 +92,20 @@ export const RecipeList = () => {
         setCurrentRecipe(dummyRecipe)
     }, [selectedOption])
   
+    const deleteRecipe = async ( docId: string ) => {
+        await deleteDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', docId))
+    }
+
+    useEffect(() => {
+        if (recipeToDelete.docId) {
+            if (confirm('are you sure you want to delete')) {
+                deleteRecipe(recipeToDelete.docId)
+                setAllRecipes((recipes) => recipes.filter(recipe => recipe.docId != recipeToDelete.docId))
+            }
+        }
+    }, [recipeToDelete])
+
+        // search bar, can search by recipe name or the name of any ingredient
     const fuse = new Fuse(allRecipes, {
         keys: [
             'recipeName',
@@ -96,17 +116,19 @@ export const RecipeList = () => {
     const results = fuse.search(searchInput)
     const recipeResults = searchInput ? results.map(result => result.item) : allRecipes;
 
+      // maps out each individual recipe from the given list
     const listItems = recipeResults.map((recipe: Recipe) => {
-        return <IndividualRecipe recipe={recipe} key={allRecipes.indexOf(recipe)} setCurrentRecipe={setCurrentRecipe} setEditedRecipe={setEditedRecipe} dummyRecipe={dummyRecipe} />
+        return <IndividualRecipe recipe={recipe} key={allRecipes.indexOf(recipe)} setCurrentRecipe={setCurrentRecipe} setEditedRecipe={setEditedRecipe} dummyRecipe={dummyRecipe} setRecipeToDelete={setRecipeToDelete} currentRecipe={currentRecipe} editedRecipe={editedRecipe}/>
     })
 
+        // maps out each radio option from the list of friends
     const listFriendRadioOptions = listOfFriends.map((friend: string) => {
         return <RadioOption friend={friend} key={listOfFriends.indexOf(friend)} setSelectedOption={setSelectedOption} ></RadioOption>
     })
 
     return (
     <>
-        <div>
+        <div style={{ margin: 10, padding: 10}}>
             <input placeholder="Search Bar" onChange={(e) => setSearchInput(e.target.value)}></input>
         </div>
         <div className="recipe-list-container">
@@ -117,7 +139,7 @@ export const RecipeList = () => {
         <div className="friend-radio-options-container">
             {listFriendRadioOptions}
         </div>
-        <div>
+        <div style={{ margin: 10, padding: 10}}>
             <Link href="/recipeInput">
                 <button>To Recipe Input</button>
             </Link>

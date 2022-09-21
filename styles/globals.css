@@ -35,6 +35,11 @@ a {
   margin: 20px;
 }
 
+.recipe-step-input-container {
+  padding: 10px;
+  margin: 10px;
+}
+
 .recipe-list-container {
   padding: 10px;
   margin: 20px;

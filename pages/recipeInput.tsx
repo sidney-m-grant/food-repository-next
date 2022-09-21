@@ -24,12 +24,14 @@ const RecipeInput = () => {
 
     const [tempRecipe, setTempRecipe] = useState<Recipe | null>(null)
 
+        // final upload
     const uploadFinishedRecipe = async () => {
         if (tempRecipe){
             await addDoc(collection(db, `${user?.email}`, 'recipeCollection', 'recipes'), tempRecipe)
         }
     } 
 
+        // called on button press, adds the current recipe step to an array
     const handleAddTempRecipeStep = () => {
         if (tempRecipeStep) {
             const objectToAdd: RecipeStep = {
@@ -42,7 +44,7 @@ const RecipeInput = () => {
             alert('invalid recipe step')
         }
     }
-
+        // called on button press, adds the current ingredient to an array
     const handleAddTempIngredient = () => {
         if (tempIngredientName && tempIngredientAmount) {
             const objectToAdd: Ingredient = {
@@ -58,6 +60,16 @@ const RecipeInput = () => {
         } else {
             alert ('invalid ingredient')
         }
+    }
+
+        // delete last recipe step
+    const handleRemoveLastTempRecipeStep = () => {
+        setTempRecipeStepArray((tempArray) => (tempArray.slice(0, -1)))
+    }
+
+        // delete last ingredient
+    const handleRemoveLastTempIngredient = () => {
+        setTempIngredientArray((tempArray) => (tempArray.slice(0, -1)))
     }
 
     const recipeStepListItems = tempRecipeStepArray.map(step => {
@@ -104,12 +116,15 @@ const RecipeInput = () => {
             <button onClick={handleAddTempRecipeStep}>Add Recipe Step</button>
             
         </div>
-        <div>
+        <div style={{ padding: 10, margin: 10 }}>
             <input placeholder="Ingredient Name" onChange={(e) => setTempIngredientName(e.target.value)} value={tempIngredientName} ></input>
             <input placeholder="Ingredient Amount" onChange={(e) => setTempIngredientAmount(e.target.value)} value={tempIngredientAmount}></input>
             <input placeholder="Ingredient Unit" onChange={(e) => setTempIngredientUnit(e.target.value)} value={tempIngredientUnit}></input>
             <button onClick={handleAddTempIngredient}>Add Ingredient</button>
         </div>
+
+        <button onClick={handleRemoveLastTempRecipeStep} style={{ padding: 10, margin: 10 }}>Remove Last Recipe Step</button>
+        <button onClick={handleRemoveLastTempIngredient} style={{ padding: 10, margin: 10 }}>Remove Last Ingredient</button>
 
         <div className="recipe-container">
             <div className="ingredient-list">
@@ -119,12 +134,12 @@ const RecipeInput = () => {
                  {recipeStepListItems}
             </div>
         </div>
-
-        <input placeholder="Recipe Name" onChange={(e) => setTempRecipeName(e.target.value)} value={tempRecipeName}></input>
-
-        <button onClick={uploadRecipe}>Upload Recipe</button>
-
-        <div>
+        <div style={{ padding: 10, margin: 10 }}>
+            <input placeholder="Recipe Name" onChange={(e) => setTempRecipeName(e.target.value)} value={tempRecipeName}></input>
+            <button onClick={uploadRecipe}>Upload Recipe</button>
+        </div>
+        
+        <div style={{ padding: 10, margin: 10 }}>
             <Link href="/recipeList">
                 <button>To Recipe List</button>
             </Link>

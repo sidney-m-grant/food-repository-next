@@ -14,6 +14,10 @@ export default function signIn() {
 
     const router = useRouter();
 
+    // registering a new user creates a collection in firestore with a docId equal to the sign up email
+    // in that collection is a document social, which has a subcollection containing two arrays
+    // one is an array of friend requests (strings with other users emails) and another of friends
+
     const registerNewUser = async () => {
         try {
             await signup(registerEmail, registerPassword)
@@ -59,10 +63,10 @@ export default function signIn() {
 
   return (
     <div>
-        <div>
+        <div style={{ margin: 10, padding: 10 }}>
             {user?.email ? user.email : "not signed in"}
         </div>
-        <div>
+        <div style={{ margin: 10, padding: 10 }}>
             <h3>Register New User</h3>
             <input placeholder="Email" onChange={(e) => {
                 setRegisterEmail(e.target.value)
@@ -73,7 +77,7 @@ export default function signIn() {
             <button onClick={registerNewUser}>Register</button>
         </div>
 
-        <div>
+        <div style={{ margin: 10, padding: 10 }}>
             <h3>Sign In</h3>
             <input placeholder="Email" onChange={(e) => {
                 setLoginEmail(e.target.value)
@@ -84,7 +88,7 @@ export default function signIn() {
             <button onClick={signIn}>Sign In</button>
         </div>
 
-        <button onClick={() => {logout()}}>Sign Out</button>
+        <button onClick={() => {logout()}} style={{ margin: 10, padding: 10}}>Sign Out</button>
 
         <button onClick={alreadySignedIn}>Already Signed In</button>
         
