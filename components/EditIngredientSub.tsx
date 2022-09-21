@@ -12,7 +12,7 @@ const EditIngredientSub: React.FC<Props> = ({ setTempRecipe, ingredient, recipe 
     const [editedAmount, setEditedAmount] = useState<string>(ingredient.ingredientAmount)
     const [editedUnit, setEditedUnit] = useState<string>(ingredient.ingredientUnit)
 
-    const handleClick = () => {
+    const handleBlur = () => {
         let tempArray = recipe.ingredientList;
         tempArray[ingredient.ingredientId-1].ingredientName = editedName;
         tempArray[ingredient.ingredientId-1].ingredientAmount = editedAmount;
@@ -33,10 +33,9 @@ const EditIngredientSub: React.FC<Props> = ({ setTempRecipe, ingredient, recipe 
 
   return (
     <div>
-        <button onClick={handleClick}>Save Edited Ingredient</button>
-        <input onChange={(e) => {setEditedName(e.target.value)}} value={editedName} placeholder={ingredient.ingredientName}></input>
-        <input onChange={(e) => {setEditedAmount(e.target.value)}} value={editedAmount} placeholder={ingredient.ingredientAmount}></input>
-        <input onChange={(e) => {setEditedUnit(e.target.value)}} value={editedUnit} placeholder={ingredient.ingredientUnit}></input>
+        <input onChange={(e) => {setEditedName(e.target.value)}} onBlur={handleBlur} value={editedName} placeholder={ingredient.ingredientName}></input>
+        <input onChange={(e) => {setEditedAmount(e.target.value)}} onBlur={handleBlur} value={editedAmount} placeholder={ingredient.ingredientAmount}></input>
+        <input onChange={(e) => {setEditedUnit(e.target.value)}} onBlur={handleBlur} value={editedUnit} placeholder={ingredient.ingredientUnit}></input>
     </div>
   )
 }

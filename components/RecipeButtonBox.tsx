@@ -6,13 +6,18 @@ interface Props {
     handleEditedRecipeClick: () => void;
     handleDeleteRecipeClick: () => void;
     recipe: Recipe;
+    toggleRecipeBox: string | null | undefined;
+    setToggleRecipeBox: React.Dispatch<React.SetStateAction<string | null | undefined>>
 }
 
-const RecipeButtonBox: React.FC<Props> = ({ handleCurrentRecipeClick, handleDeleteRecipeClick, handleEditedRecipeClick }) => {
-    const [toggleDisplay, setToggleDisplay] = useState<boolean>(false)
+const RecipeButtonBox: React.FC<Props> = ({ handleCurrentRecipeClick, handleDeleteRecipeClick, handleEditedRecipeClick, toggleRecipeBox, setToggleRecipeBox, recipe }) => {
 
     const handleToggleClick = () => {
-        setToggleDisplay(!toggleDisplay)
+        setToggleRecipeBox(recipe?.docId)
+    }
+
+    const handleShowLess = () => {
+        setToggleRecipeBox(null)
     }
 
     const handleDelete = () => {
@@ -22,9 +27,9 @@ const RecipeButtonBox: React.FC<Props> = ({ handleCurrentRecipeClick, handleDele
 
   return (
     <div style={{ display: 'inline-block', margin: 10 }}>
-        {!toggleDisplay ? <button onClick={handleToggleClick}>Show More</button> : ( 
+        {toggleRecipeBox != recipe.docId ? <button onClick={handleToggleClick}>Show More</button> : ( 
             <div>
-                <button onClick={handleToggleClick}>Show Less</button>
+                <button onClick={handleShowLess}>Show Less</button>
                 <button onClick={handleCurrentRecipeClick}>Set as Current Recipe</button>
                 <button onClick={handleEditedRecipeClick}>Edit Recipe</button>
                 <button onClick={handleDelete}>Delete Recipe</button>

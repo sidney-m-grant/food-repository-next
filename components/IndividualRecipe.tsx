@@ -11,9 +11,11 @@ interface Props{
     setRecipeToDelete: React.Dispatch<React.SetStateAction<Recipe>>;
     currentRecipe: Recipe;
     editedRecipe: Recipe;
+    toggleRecipeBox: string | null;
+    setToggleRecipeBox: React.Dispatch<React.SetStateAction<string | null>>
 }
 
-const IndividualRecipe: React.FC<Props> = ({ recipe, setCurrentRecipe, setEditedRecipe, dummyRecipe, setRecipeToDelete, currentRecipe, editedRecipe }) => {
+const IndividualRecipe: React.FC<Props> = ({ recipe, setCurrentRecipe, setEditedRecipe, dummyRecipe, setRecipeToDelete, currentRecipe, editedRecipe, toggleRecipeBox, setToggleRecipeBox }) => {
 
   const handleCurrentRecipeClick = () => {
     setEditedRecipe(dummyRecipe);
@@ -37,10 +39,14 @@ const IndividualRecipe: React.FC<Props> = ({ recipe, setCurrentRecipe, setEdited
 
   return (
     <div className="individual-recipe">
-        <RecipeButtonBox handleCurrentRecipeClick={handleCurrentRecipeClick} handleEditedRecipeClick={handleEditedRecipeClick} handleDeleteRecipeClick={handleDeleteRecipeClick} recipe={recipe} />
-       {/*} <button onClick={handleCurrentRecipeClick}>Set as Current Recipe</button>
-        <button onClick={handleEditedRecipeClick}>Edit Recipe</button>
-  <button onClick={handleDeleteRecipeClick}>Delete Recipe</button> */}
+        <RecipeButtonBox 
+          handleCurrentRecipeClick={handleCurrentRecipeClick} 
+          handleEditedRecipeClick={handleEditedRecipeClick} 
+          handleDeleteRecipeClick={handleDeleteRecipeClick} 
+          recipe={recipe} 
+          toggleRecipeBox={toggleRecipeBox}
+          setToggleRecipeBox={setToggleRecipeBox}
+        />
         <h5 style={{ display: 'inline-block', margin: 10 }}>{recipe.recipeName}</h5>
     </div>
   )

@@ -10,7 +10,7 @@ interface Props {
 const EditRecipeSub: React.FC<Props> = ({ setTempRecipe, recipeStep, recipe }) => {
     const [editedText, setEditedText] = useState<string>(recipeStep.recipeStepText)
 
-    const handleClick = () => {
+    const handleBlur = () => {
         let tempArray = recipe.recipeStepList;
         tempArray[recipeStep.recipeStepNumber-1].recipeStepText = editedText;
         setTempRecipe(prev => {
@@ -20,15 +20,14 @@ const EditRecipeSub: React.FC<Props> = ({ setTempRecipe, recipeStep, recipe }) =
             }
         })
     }
-    
+
     useEffect(() => {
         setEditedText(recipeStep.recipeStepText)
     }, [recipe])
 
   return (
     <div>
-        <input onChange={(e) => {setEditedText(e.target.value)}} value={editedText} placeholder={recipeStep.recipeStepText}/>
-        <button onClick={handleClick}>Save Edit</button>
+        <input onChange={(e) => {setEditedText(e.target.value)}} onBlur={handleBlur} value={editedText} placeholder={recipeStep.recipeStepText}/>
     </div>
   )
 }

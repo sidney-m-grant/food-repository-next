@@ -50,13 +50,14 @@ export const RecipeList = () => {
         }]
     }
 
-    const [listOfFriends, setListOfFriends] = useState<string[]>([user?.email])
-    const [selectedOption, setSelectedOption] = useState<string>(user.email)
-    const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
+    const [listOfFriends, setListOfFriends] = useState<string[]>([user?.email]);
+    const [selectedOption, setSelectedOption] = useState<string>(user.email);
+    const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
     const [currentRecipe, setCurrentRecipe] = useState<Recipe>(dummyRecipe);
     const [editedRecipe, setEditedRecipe] = useState<Recipe>(dummyRecipe);
     const [searchInput, setSearchInput] = useState<string>("");
-    const [recipeToDelete, setRecipeToDelete] = useState<Recipe>(dummyRecipe)
+    const [recipeToDelete, setRecipeToDelete] = useState<Recipe>(dummyRecipe);
+    const [toggleRecipeBox, setToggleRecipeBox] = useState<string | null | undefined>(null)
 
     // on rendering, fetch the users friend list users email is already contained in the friend list at index 0
     // must stay in the array in order to have your own recipes available as a radio option
@@ -118,7 +119,18 @@ export const RecipeList = () => {
 
       // maps out each individual recipe from the given list
     const listItems = recipeResults.map((recipe: Recipe) => {
-        return <IndividualRecipe recipe={recipe} key={allRecipes.indexOf(recipe)} setCurrentRecipe={setCurrentRecipe} setEditedRecipe={setEditedRecipe} dummyRecipe={dummyRecipe} setRecipeToDelete={setRecipeToDelete} currentRecipe={currentRecipe} editedRecipe={editedRecipe}/>
+        return <IndividualRecipe 
+            recipe={recipe} 
+            key={allRecipes.indexOf(recipe)} 
+            setCurrentRecipe={setCurrentRecipe} 
+            setEditedRecipe={setEditedRecipe} 
+            dummyRecipe={dummyRecipe} 
+            setRecipeToDelete={setRecipeToDelete} 
+            currentRecipe={currentRecipe} 
+            editedRecipe={editedRecipe}
+            toggleRecipeBox={toggleRecipeBox}
+            setToggleRecipeBox={setToggleRecipeBox}
+        />
     })
 
         // maps out each radio option from the list of friends

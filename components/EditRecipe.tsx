@@ -75,12 +75,29 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe }) => {
     }
 
     const uploadFinishedRecipe = async () => {
+        for (var i = 0; i < tempRecipe.recipeStepList.length; i++) {
+            if (!tempRecipe.recipeStepList[i].recipeStepText) {
+                alert('no empty recipe steps, edit failed');
+                return;
+            }
+        }
         
-        if (tempRecipe.recipeName && tempRecipe.ingredientList.length > 0 && tempRecipe.recipeStepList.length > 0 && tempRecipe.recipeStepList[tempRecipe.recipeStepList.length - 1].recipeStepText && tempRecipe.ingredientList[tempRecipe.ingredientList.length -1].ingredientName) {
+        for (var i = 0; i < tempRecipe.ingredientList.length; i++) {
+            if (!tempRecipe.ingredientList[i].ingredientName) {
+                alert('ingredients must have a name, edit failed');
+                return;
+            }
+        }
+
+        if (
+            tempRecipe.recipeName && 
+            tempRecipe.ingredientList.length > 0 && 
+            tempRecipe.recipeStepList.length > 0
+            ) {
             await setDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', `${tempRecipe.docId}`), tempRecipe)
             alert('edits uploaded')
         } else {
-            alert('invalid recipe, upload failed')
+            alert('recipes must have a name and at least one ingredient and step each, edit failed')
         }
     } 
 
