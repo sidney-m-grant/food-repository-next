@@ -11,9 +11,21 @@ import Fuse from 'fuse.js'
 import Link from 'next/link'
 import EditRecipe from '../components/EditRecipe'
 
-export type RecipeStep = {
+  export type RecipeStep = {
     recipeStepText: string;
     recipeStepNumber: number;
+  }
+
+  export type RecipeStepBlock = {
+    for: string;
+    steps: RecipeStep[]
+    blockNumber: number;
+  }
+
+  export type IngredientBlock = {
+    for: string;
+    ingredients: Ingredient[]
+    blockNumber: number;
   }
   
   export type Ingredient = {
@@ -26,8 +38,8 @@ export type RecipeStep = {
   export type Recipe = {
     recipeName: string;
     docId?: string;
-    recipeStepList: RecipeStep[];
-    ingredientList: Ingredient[];
+    recipeStepList: RecipeStepBlock[];
+    ingredientList: IngredientBlock[];
   }
 
 export const RecipeList = () => {
@@ -39,14 +51,22 @@ export const RecipeList = () => {
     const dummyRecipe: Recipe = {
         recipeName: '',
         recipeStepList: [{
-            recipeStepNumber: 1,
-            recipeStepText: ''
+            for: '',
+            steps: [{
+                recipeStepNumber: 1,
+                recipeStepText: ''
+            }],
+            blockNumber: 0
         }],
         ingredientList: [{
-            ingredientAmount: '',
-            ingredientId: 1,
-            ingredientName: '',
-            ingredientUnit: '',
+            for: '',
+            ingredients: [{
+                ingredientAmount: '',
+                ingredientId: 1,
+                ingredientName: '',
+                ingredientUnit: '',
+            }],
+            blockNumber: 0
         }]
     }
 

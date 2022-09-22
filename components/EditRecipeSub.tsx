@@ -1,29 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import type { Recipe, RecipeStep } from '../pages/recipeList'
+import type { Recipe, RecipeStep, RecipeStepBlock } from '../pages/recipeList'
 
 interface Props {
-    setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>;
+    setTempRecipeStepBlock: React.Dispatch<React.SetStateAction<RecipeStepBlock>>;
     recipeStep: RecipeStep;
-    recipe: Recipe;
+    recipeStepBlock: RecipeStepBlock;
 }
 
-const EditRecipeSub: React.FC<Props> = ({ setTempRecipe, recipeStep, recipe }) => {
+const EditRecipeSub: React.FC<Props> = ({ setTempRecipeStepBlock, recipeStep, recipeStepBlock }) => {
     const [editedText, setEditedText] = useState<string>(recipeStep.recipeStepText)
 
     const handleBlur = () => {
-        let tempArray = recipe.recipeStepList;
+        let tempArray = recipeStepBlock.steps
         tempArray[recipeStep.recipeStepNumber-1].recipeStepText = editedText;
-        setTempRecipe(prev => {
+        setTempRecipeStepBlock(prev => {
             return {
                 ...prev,
-                recipeStepList: tempArray
+                steps: tempArray
             }
         })
     }
 
     useEffect(() => {
         setEditedText(recipeStep.recipeStepText)
-    }, [recipe])
+    }, [recipeStepBlock])
 
   return (
     <div>

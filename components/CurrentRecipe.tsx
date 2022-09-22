@@ -1,5 +1,7 @@
 import React from 'react'
-import type { Recipe, RecipeStep, Ingredient } from '../pages/recipeList'
+import type { Recipe, RecipeStep, Ingredient, RecipeStepBlock, IngredientBlock } from '../pages/recipeList'
+import RecipeStepBlockComp from './RecipeStepBlockComp'
+import IngredientBlockComp from './IngredientBlockComp'
 
 interface Props {
   currentRecipe: Recipe
@@ -7,13 +9,13 @@ interface Props {
 
 const CurrentRecipe: React.FC<Props> = ({ currentRecipe }) => {
 
-    const listRecipeSteps = currentRecipe.recipeStepList.map((item: RecipeStep) => {
-        return <h5 key={item.recipeStepNumber}>{item.recipeStepNumber}. {item.recipeStepText}</h5>
-    }) 
-
-    const listIngredients = currentRecipe.ingredientList.map((ingredient: Ingredient) => {
-        return <h5 key={ingredient.ingredientId}>* {ingredient.ingredientAmount}  {ingredient.ingredientUnit}  {ingredient.ingredientName}</h5>
-    }) 
+    const listRecipeSteps = currentRecipe.recipeStepList.map((stepBlock: RecipeStepBlock) => {
+      return <RecipeStepBlockComp key={currentRecipe.recipeStepList.indexOf(stepBlock)} stepBlock={stepBlock} recipeStepList={currentRecipe.recipeStepList} />
+    })
+    
+    const listIngredients = currentRecipe.ingredientList.map((ingBlock: IngredientBlock) => {
+      return <IngredientBlockComp key={currentRecipe.ingredientList.indexOf(ingBlock)} ingBlock={ingBlock} ingredientList={currentRecipe.ingredientList} />
+    })
 
   return (
     <div className="recipe-container">

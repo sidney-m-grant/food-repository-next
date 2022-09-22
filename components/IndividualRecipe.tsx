@@ -11,8 +11,8 @@ interface Props{
     setRecipeToDelete: React.Dispatch<React.SetStateAction<Recipe>>;
     currentRecipe: Recipe;
     editedRecipe: Recipe;
-    toggleRecipeBox: string | null;
-    setToggleRecipeBox: React.Dispatch<React.SetStateAction<string | null>>
+    toggleRecipeBox: string | null | undefined;
+    setToggleRecipeBox: React.Dispatch<React.SetStateAction<string | null | undefined>>
 }
 
 const IndividualRecipe: React.FC<Props> = ({ recipe, setCurrentRecipe, setEditedRecipe, dummyRecipe, setRecipeToDelete, currentRecipe, editedRecipe, toggleRecipeBox, setToggleRecipeBox }) => {

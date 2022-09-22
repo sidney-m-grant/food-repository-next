@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import type { Recipe, RecipeStepBlock, IngredientBlock } from '../pages/recipeList'
 import CurrentRecipe from './CurrentRecipe'
-import { setDoc, doc, } from 'firebase/firestore'
+import { addDoc, collection, } from 'firebase/firestore'
 import { useAuth } from '../context/AuthContext'
 import { db } from '../firebase'
 import EditRecipeSubBlock from './EditRecipeSubBlock'
 import EditIngredientSubBlock from './EditIngredientSubBlock'
 
-
 interface Props {
-  editedRecipe: Recipe
+    dummyRecipe: Recipe
 }
 
-const EditRecipe: React.FC<Props> = ({ editedRecipe }) => {
+const RecipeInputComp: React.FC<Props> = ({ dummyRecipe }) => {
 
     const { user } = useAuth()
 
-    const [tempRecipe, setTempRecipe] = useState<Recipe>(editedRecipe)
+    const [tempRecipe, setTempRecipe] = useState<Recipe>(dummyRecipe)
+    const [tempRecipeName, setTempRecipeName] = useState<string>('')
 
     const listRecipeStepBlocks = tempRecipe.recipeStepList.map((recipeStepBlock) => {
         return <EditRecipeSubBlock setTempRecipe={setTempRecipe} recipeStepBlock={recipeStepBlock} tempRecipe={tempRecipe} key={tempRecipe.recipeStepList.indexOf(recipeStepBlock)} />
@@ -25,10 +25,6 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe }) => {
     const listIngredientBlocks = tempRecipe.ingredientList.map((ingredientBlock) => {
         return <EditIngredientSubBlock setTempRecipe={setTempRecipe} ingredientBlock={ingredientBlock} tempRecipe={tempRecipe} key={tempRecipe.ingredientList.indexOf(ingredientBlock)} />
     })
-
-    useEffect(() => {
-        setTempRecipe(editedRecipe)
-    }, [editedRecipe])
 
     const addNewRecipeStepBlock = () => {
         let tempRecipeStepListAddition = tempRecipe.recipeStepList
@@ -84,24 +80,28 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe }) => {
         })
     }
 
-    const uploadFinishedRecipe = async () => {
-        if (
-            tempRecipe.recipeName && 
-            tempRecipe.ingredientList.length > 0 && 
-            tempRecipe.recipeStepList.length > 0
-            ) {
-            await setDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', `${tempRecipe.docId}`), tempRecipe)
-            alert('edits uploaded')
-        } else {
-            alert('recipes must have a name and at least one ingredient and step each, edit failed')
-        }
-    } 
+    const handleBlur = () => {
+        setTempRecipe(prev => {
+            return {
+                ...prev,
+                recipeName: tempRecipeName
+            }
+        })
+    }
 
+    const uploadRecipe = async () => {
+        if (tempRecipe.recipeName && tempRecipe.recipeStepList.length > 0 && tempRecipe.ingredientList.length > 0) {
+            if (confirm('Upload Recipe?')) {
+                await addDoc(collection(db, `${user?.email}`, 'recipeCollection', 'recipes'), tempRecipe)
+            }
+        }
+    }
 
   return (
     <>
         <div>
-            {editedRecipe.recipeName}
+            <input onChange={(e) => {setTempRecipeName(e.target.value)}} onBlur={handleBlur} value={tempRecipeName}></input>
+            {tempRecipeName}
             <button onClick={addNewRecipeStepBlock} >Add New Recipe Step Block</button>
             <button onClick={deleteLastRecipeStepBlock} >Delete Last Recipe Step Block</button>
             <button onClick={addNewIngredientBlock} >Add New Ingredient Block</button>
@@ -116,9 +116,9 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe }) => {
             </div>
         </div>
         <CurrentRecipe currentRecipe={tempRecipe} />
-        <button onClick={uploadFinishedRecipe}>Upload Finished Recipe</button>
+        <button onClick={uploadRecipe} >Upload Recipe</button>
     </>
   )
 }
 
-export default EditRecipe
+export default RecipeInputComp

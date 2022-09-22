@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { Ingredient, Recipe } from '../pages/recipeList';
+import { Ingredient, IngredientBlock } from '../pages/recipeList';
 
 interface Props {
-    setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>;
+    setTempIngredientBlock: React.Dispatch<React.SetStateAction<IngredientBlock>>
     ingredient: Ingredient;
-    recipe: Recipe;
+    ingredientBlock: IngredientBlock;
 }
 
-const EditIngredientSub: React.FC<Props> = ({ setTempRecipe, ingredient, recipe }) => {
+const EditIngredientSub: React.FC<Props> = ({ setTempIngredientBlock, ingredient, ingredientBlock }) => {
     const [editedName, setEditedName] = useState<string>(ingredient.ingredientName)
     const [editedAmount, setEditedAmount] = useState<string>(ingredient.ingredientAmount)
     const [editedUnit, setEditedUnit] = useState<string>(ingredient.ingredientUnit)
 
     const handleBlur = () => {
-        let tempArray = recipe.ingredientList;
+        let tempArray = ingredientBlock.ingredients
         tempArray[ingredient.ingredientId-1].ingredientName = editedName;
         tempArray[ingredient.ingredientId-1].ingredientAmount = editedAmount;
         tempArray[ingredient.ingredientId-1].ingredientUnit = editedUnit;
-        setTempRecipe(prev => {
+        setTempIngredientBlock(prev => {
             return {
                 ...prev,
                 ingredientList: tempArray
@@ -29,7 +29,7 @@ const EditIngredientSub: React.FC<Props> = ({ setTempRecipe, ingredient, recipe 
         setEditedName(ingredient.ingredientName)
         setEditedAmount(ingredient.ingredientAmount)
         setEditedUnit(ingredient.ingredientUnit)
-    }, [recipe])
+    }, [ingredientBlock])
 
   return (
     <div>
