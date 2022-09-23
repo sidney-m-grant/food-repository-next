@@ -1,41 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import type { Recipe, RecipeStep, Ingredient, RecipeStepBlock, IngredientBlock } from '../pages/recipeList'
-import { addDoc, collection } from 'firebase/firestore'
-import { useAuth } from '../context/AuthContext' 
-import { db } from '../firebase'
+import React from 'react'
 import SignOutButton from '../components/SignOutButton'
 import Link from 'next/link'
-import RecipeStepBlockComp from '../components/RecipeStepBlockComp'
-import IngredientBlockComp from '../components/IngredientBlockComp'
 import RecipeInputComp from '../components/RecipeInputComp'
+import { dummyRecipe } from '../pages/recipeList'
 
 const RecipeInput = () => {
 
-    const { user } = useAuth()
-    const router = useRouter()
-
-    const dummyRecipe: Recipe = {
-        recipeName: '',
-        recipeStepList: [{
-            for: '',
-            steps: [{
-                recipeStepNumber: 1,
-                recipeStepText: ''
-            }],
-            blockNumber: 0
-        }],
-        ingredientList: [{
-            for: '',
-            ingredients: [{
-                ingredientAmount: '',
-                ingredientId: 1,
-                ingredientName: '',
-                ingredientUnit: '',
-            }],
-            blockNumber: 0
-        }]
-    }
 /*
     const [tempRecipeStep, setTempRecipeStep] = useState<string>("")
     const [tempRecipeStepArray, setTempRecipeStepArray] = useState<RecipeStep[]>([])

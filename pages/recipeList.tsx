@@ -3,13 +3,14 @@ import SignOutButton from '../components/SignOutButton'
 import { useRouter } from 'next/router'
 import CurrentRecipe from '../components/CurrentRecipe'
 import IndividualRecipe from '../components/IndividualRecipe'
-import { getDoc, doc, getDocs, collection, deleteDoc } from 'firebase/firestore'
-import { db } from '../firebase'
+import { getDoc, doc, getDocs, collection, deleteDoc} from 'firebase/firestore'
+import { db, storage } from '../firebase'
 import { useAuth } from '../context/AuthContext'
 import RadioOption from '../components/RadioOption'
 import Fuse from 'fuse.js'
 import Link from 'next/link'
 import EditRecipe from '../components/EditRecipe'
+import { deleteObject, ref } from 'firebase/storage'
 
   export type RecipeStep = {
     recipeStepText: string;
@@ -40,7 +41,30 @@ import EditRecipe from '../components/EditRecipe'
     docId?: string;
     recipeStepList: RecipeStepBlock[];
     ingredientList: IngredientBlock[];
+    imgPath?: string
   }
+
+  export const dummyRecipe: Recipe = {
+    recipeName: '',
+    recipeStepList: [{
+        for: '',
+        steps: [{
+            recipeStepNumber: 1,
+            recipeStepText: ''
+        }],
+        blockNumber: 0
+    }],
+    ingredientList: [{
+        for: '',
+        ingredients: [{
+            ingredientAmount: '',
+            ingredientId: 1,
+            ingredientName: '',
+            ingredientUnit: '',
+        }],
+        blockNumber: 0
+    }]
+}
 
 export const RecipeList = () => {
 
@@ -48,27 +72,7 @@ export const RecipeList = () => {
     const { user } = useAuth()
 
     // this empty recipe just prevents type errors
-    const dummyRecipe: Recipe = {
-        recipeName: '',
-        recipeStepList: [{
-            for: '',
-            steps: [{
-                recipeStepNumber: 1,
-                recipeStepText: ''
-            }],
-            blockNumber: 0
-        }],
-        ingredientList: [{
-            for: '',
-            ingredients: [{
-                ingredientAmount: '',
-                ingredientId: 1,
-                ingredientName: '',
-                ingredientUnit: '',
-            }],
-            blockNumber: 0
-        }]
-    }
+    
 
     const [listOfFriends, setListOfFriends] = useState<string[]>([user?.email]);
     const [selectedOption, setSelectedOption] = useState<string>(user.email);
@@ -104,6 +108,7 @@ export const RecipeList = () => {
                     recipeStepList: recipe.recipeStepList,
                     ingredientList: recipe.ingredientList,
                     docId: recipe.docId,
+                    imgPath:  recipe.imgPath
                 }
                 recipeArray.push(temp)
             })
@@ -117,10 +122,18 @@ export const RecipeList = () => {
         await deleteDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', docId))
     }
 
+    const deleteImage = async ( imgPath: string ) => {
+        const deleteRef = ref(storage, imgPath)
+        await deleteObject(deleteRef)
+    }
+
     useEffect(() => {
         if (recipeToDelete.docId) {
             if (confirm('are you sure you want to delete')) {
                 deleteRecipe(recipeToDelete.docId)
+                if (recipeToDelete.imgPath) {
+                    deleteImage(recipeToDelete.imgPath)
+                }
                 setAllRecipes((recipes) => recipes.filter(recipe => recipe.docId != recipeToDelete.docId))
             }
         }

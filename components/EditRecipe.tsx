@@ -19,11 +19,11 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe }) => {
     const [tempRecipe, setTempRecipe] = useState<Recipe>(editedRecipe)
 
     const listRecipeStepBlocks = tempRecipe.recipeStepList.map((recipeStepBlock) => {
-        return <EditRecipeSubBlock setTempRecipe={setTempRecipe} recipeStepBlock={recipeStepBlock} tempRecipe={tempRecipe} key={tempRecipe.recipeStepList.indexOf(recipeStepBlock)} />
+        return <EditRecipeSubBlock setTempRecipe={setTempRecipe} recipeStepBlock={recipeStepBlock} tempRecipe={tempRecipe} key={recipeStepBlock.blockNumber} />
     })
 
     const listIngredientBlocks = tempRecipe.ingredientList.map((ingredientBlock) => {
-        return <EditIngredientSubBlock setTempRecipe={setTempRecipe} ingredientBlock={ingredientBlock} tempRecipe={tempRecipe} key={tempRecipe.ingredientList.indexOf(ingredientBlock)} />
+        return <EditIngredientSubBlock setTempRecipe={setTempRecipe} ingredientBlock={ingredientBlock} tempRecipe={tempRecipe} key={ingredientBlock.blockNumber} />
     })
 
     useEffect(() => {

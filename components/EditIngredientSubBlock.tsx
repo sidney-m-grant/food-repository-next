@@ -3,7 +3,7 @@ import type { IngredientBlock, Recipe } from '../pages/recipeList'
 import EditIngredientSub from './EditIngredientSub'
 
 interface Props {
-  setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>;
+  setTempRecipe: any /* DispatchWithCallback<React.SetStateAction<Recipe>, Recipe> */;
   ingredientBlock: IngredientBlock;
   tempRecipe: Recipe;
 }
@@ -20,7 +20,7 @@ const EditIngredientSubBlock: React.FC<Props> = ({ setTempRecipe, ingredientBloc
     let tempIngredientList = tempRecipe.ingredientList;
     tempIngredientList[ingredientBlock.blockNumber] = tempIngredientBlock
     tempIngredientList[ingredientBlock.blockNumber].for = forStatement
-    setTempRecipe(prev => {
+    setTempRecipe((prev: Recipe) => {
       return {
           ...prev,
           ingredientList: tempIngredientList
@@ -42,7 +42,7 @@ const EditIngredientSubBlock: React.FC<Props> = ({ setTempRecipe, ingredientBloc
 const handleDeleteLastIngredient = () => {
   let tempIngredientSubtraction = tempIngredientBlock;
   tempIngredientSubtraction.ingredients.pop();
-  setTempRecipe(prev => {
+  setTempRecipe((prev: Recipe) => {
       return {
           ...prev,
           ingredients: tempIngredientSubtraction.ingredients

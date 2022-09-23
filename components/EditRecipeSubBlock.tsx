@@ -3,7 +3,7 @@ import type { RecipeStepBlock , Recipe } from '../pages/recipeList';
 import EditRecipeSub from './EditRecipeSub'
 
 interface Props {
-  setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>;
+  setTempRecipe: any /* DispatchWithCallback<React.SetStateAction<Recipe>, Recipe> */;
   recipeStepBlock: RecipeStepBlock;
   tempRecipe: Recipe;
 }
@@ -20,7 +20,7 @@ const EditRecipeSubBlock: React.FC<Props> = ({ setTempRecipe, recipeStepBlock, t
     let tempRecipeStepList = tempRecipe.recipeStepList;
     tempRecipeStepList[recipeStepBlock.blockNumber-1] = tempRecipeStepBlock
     tempRecipeStepList[recipeStepBlock.blockNumber-1].for = forStatement
-    setTempRecipe(prev => {
+    setTempRecipe((prev: Recipe) => {
       return {
           ...prev,
           recipeStepList: tempRecipeStepList

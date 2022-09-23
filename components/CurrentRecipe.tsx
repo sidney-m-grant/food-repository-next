@@ -20,6 +20,10 @@ const CurrentRecipe: React.FC<Props> = ({ currentRecipe }) => {
   return (
     <div className="recipe-container">
         {currentRecipe.recipeName}
+        {currentRecipe.imgPath ? 
+          <img style={{height: 150, width: 150}} src={currentRecipe.imgPath}></img> : 
+          null
+        }
         <div className="ingredient-list">
           {listIngredients}
         </div>
