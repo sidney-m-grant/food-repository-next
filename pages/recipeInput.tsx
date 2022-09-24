@@ -1,7 +1,7 @@
 import React from 'react'
-import SignOutButton from '../components/SignOutButton'
+import SignOutButton from '../components/UIComponents/SignOutButton'
 import Link from 'next/link'
-import RecipeInputComp from '../components/RecipeInputComp'
+import RecipeInputComp from '../components/EditInputComponents/RecipeInputComp'
 import { dummyRecipe } from '../pages/recipeList'
 
 const RecipeInput = () => {

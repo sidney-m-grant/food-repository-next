@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import type { Recipe, RecipeStepBlock, IngredientBlock } from '../pages/recipeList'
-import CurrentRecipe from './CurrentRecipe'
+import type { Recipe, RecipeStepBlock, IngredientBlock } from '../../pages/recipeList'
+import CurrentRecipe from '../RecipeComponents/CurrentRecipe'
 import { addDoc, collection, } from 'firebase/firestore'
-import { useAuth } from '../context/AuthContext'
-import { db, storage } from '../firebase'
+import { useAuth } from '../../context/AuthContext'
+import { db, storage } from '../../firebase'
 import EditRecipeSubBlock from './EditRecipeSubBlock'
 import EditIngredientSubBlock from './EditIngredientSubBlock'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
@@ -37,7 +37,7 @@ const RecipeInputComp: React.FC<Props> = ({ dummyRecipe }) => {
         let block: RecipeStepBlock = {
             for: '',
             steps: [{recipeStepNumber: 1, recipeStepText: ''}],
-            blockNumber: tempRecipe.recipeStepList.length + 1
+            blockNumber: tempRecipe.recipeStepList.length
         }
         tempRecipeStepListAddition.push(block)
         setTempRecipe(prev => {
@@ -53,7 +53,7 @@ const RecipeInputComp: React.FC<Props> = ({ dummyRecipe }) => {
         let block: IngredientBlock = {
             for: '',
             ingredients: [{ingredientName: '', ingredientAmount: '', ingredientId: 1, ingredientUnit: ''}],
-            blockNumber: tempRecipe.ingredientList.length + 1
+            blockNumber: tempRecipe.ingredientList.length
         }
         tempIngredientListAddition.push(block)
         setTempRecipe(prev => {
@@ -102,7 +102,7 @@ const RecipeInputComp: React.FC<Props> = ({ dummyRecipe }) => {
                     setUploading(true)
                     const imageRef = ref(storage, `${user?.email}/${tempImageFile.name + v4()}`)
                     new Compressor(tempImageFile, {
-                        quality: 0.4,
+                        quality: 0.2,
                         success(result) {
                             uploadBytes(imageRef, result)
                             .then((snapshot) => getDownloadURL(snapshot.ref))
@@ -134,12 +134,17 @@ const RecipeInputComp: React.FC<Props> = ({ dummyRecipe }) => {
         }
     }, [tempRecipe.imgPath])
 
-
+{/*onChange={(e) => {setTempRecipeName(e.target.value)}} onBlur={handleBlur} value={tempRecipeName} */} 
 
   return (
     <>
         <div>
-            <input onChange={(e) => {setTempRecipeName(e.target.value)}} onBlur={handleBlur} value={tempRecipeName}></input>
+            <input value={tempRecipe.recipeName} onChange={(e) => {setTempRecipe(prev => {
+                return {
+                    ...prev,
+                    recipeName: e.target.value
+                }
+            })}}></input>
             {tempRecipeName}
             <button onClick={addNewRecipeStepBlock} >Add New Recipe Step Block</button>
             <button onClick={deleteLastRecipeStepBlock} >Delete Last Recipe Step Block</button>

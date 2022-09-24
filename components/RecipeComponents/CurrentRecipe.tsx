@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Recipe, RecipeStep, Ingredient, RecipeStepBlock, IngredientBlock } from '../pages/recipeList'
+import type { Recipe, RecipeStep, Ingredient, RecipeStepBlock, IngredientBlock } from '../../pages/recipeList'
 import RecipeStepBlockComp from './RecipeStepBlockComp'
 import IngredientBlockComp from './IngredientBlockComp'
 

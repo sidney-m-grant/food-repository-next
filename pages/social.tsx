@@ -4,7 +4,7 @@ import { doc, getDoc, getDocs, setDoc, collection } from 'firebase/firestore'
 import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/router'
 import FriendRequest from '../components/FriendRequest'
-import SignOutButton from '../components/SignOutButton'
+import SignOutButton from '../components/UIComponents/SignOutButton'
 import Link from 'next/link'
 
 

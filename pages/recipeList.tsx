@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import SignOutButton from '../components/SignOutButton'
+import SignOutButton from '../components/UIComponents/SignOutButton'
 import { useRouter } from 'next/router'
-import CurrentRecipe from '../components/CurrentRecipe'
-import IndividualRecipe from '../components/IndividualRecipe'
-import { getDoc, doc, getDocs, collection, deleteDoc} from 'firebase/firestore'
+import CurrentRecipe from '../components/RecipeComponents/CurrentRecipe'
+import IndividualRecipe from '../components/RecipeComponents/IndividualRecipe'
+import { getDoc, doc, getDocs, collection, deleteDoc } from 'firebase/firestore'
 import { db, storage } from '../firebase'
 import { useAuth } from '../context/AuthContext'
-import RadioOption from '../components/RadioOption'
+import RadioOption from '../components/UIComponents/RadioOption'
 import Fuse from 'fuse.js'
 import Link from 'next/link'
-import EditRecipe from '../components/EditRecipe'
+import EditRecipe from '../components/EditInputComponents/EditRecipe'
 import { deleteObject, ref } from 'firebase/storage'
+import { List } from '@mui/material'
 
   export type RecipeStep = {
     recipeStepText: string;
@@ -82,6 +83,7 @@ export const RecipeList = () => {
     const [searchInput, setSearchInput] = useState<string>("");
     const [recipeToDelete, setRecipeToDelete] = useState<Recipe>(dummyRecipe);
     const [toggleRecipeBox, setToggleRecipeBox] = useState<string | null | undefined>(null)
+    const [toggleFetchRecipes, setToggleFetchRecipes] = useState<boolean>(false)
 
     // on rendering, fetch the users friend list users email is already contained in the friend list at index 0
     // must stay in the array in order to have your own recipes available as a radio option
@@ -116,7 +118,7 @@ export const RecipeList = () => {
         }
         getRecipes()
         setCurrentRecipe(dummyRecipe)
-    }, [selectedOption])
+    }, [selectedOption, toggleFetchRecipes])
   
     const deleteRecipe = async ( docId: string ) => {
         await deleteDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', docId))
@@ -178,8 +180,10 @@ export const RecipeList = () => {
         </div>
         <div className="recipe-list-container">
             {currentRecipe.recipeName ? <CurrentRecipe currentRecipe={currentRecipe}/> : null}
-            {editedRecipe.recipeName ? <EditRecipe editedRecipe={editedRecipe}/> : null}
-            {listItems}
+            {editedRecipe.recipeName ? <EditRecipe editedRecipe={editedRecipe} setToggleFetchRecipes={setToggleFetchRecipes} toggleFetchRecipes={toggleFetchRecipes}/> : null}
+            <List>
+                {listItems}
+            </List>
         </div>
         <div className="friend-radio-options-container">
             {listFriendRadioOptions}

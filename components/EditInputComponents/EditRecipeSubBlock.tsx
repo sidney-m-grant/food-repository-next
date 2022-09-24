@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import type { RecipeStepBlock , Recipe } from '../pages/recipeList';
+import type { RecipeStepBlock , Recipe } from '../../pages/recipeList';
 import EditRecipeSub from './EditRecipeSub'
 
 interface Props {
-  setTempRecipe: any /* DispatchWithCallback<React.SetStateAction<Recipe>, Recipe> */;
+  setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>
   recipeStepBlock: RecipeStepBlock;
   tempRecipe: Recipe;
 }
@@ -18,8 +18,8 @@ const EditRecipeSubBlock: React.FC<Props> = ({ setTempRecipe, recipeStepBlock, t
 
   const handleAddRecipeStepBlockEdits = () => {
     let tempRecipeStepList = tempRecipe.recipeStepList;
-    tempRecipeStepList[recipeStepBlock.blockNumber-1] = tempRecipeStepBlock
-    tempRecipeStepList[recipeStepBlock.blockNumber-1].for = forStatement
+    tempRecipeStepList[recipeStepBlock.blockNumber] = tempRecipeStepBlock
+    tempRecipeStepList[recipeStepBlock.blockNumber].for = forStatement
     setTempRecipe((prev: Recipe) => {
       return {
           ...prev,

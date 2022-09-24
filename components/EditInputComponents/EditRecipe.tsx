@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react'
-import type { Recipe, RecipeStepBlock, IngredientBlock } from '../pages/recipeList'
-import CurrentRecipe from './CurrentRecipe'
-import { setDoc, doc, } from 'firebase/firestore'
-import { useAuth } from '../context/AuthContext'
-import { db } from '../firebase'
+import type { Recipe, RecipeStepBlock, IngredientBlock } from '../../pages/recipeList'
+import CurrentRecipe from '../RecipeComponents/CurrentRecipe'
+import { setDoc, doc } from 'firebase/firestore'
+import { useAuth } from '../../context/AuthContext'
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
+import { storage, db } from '../../firebase'
 import EditRecipeSubBlock from './EditRecipeSubBlock'
 import EditIngredientSubBlock from './EditIngredientSubBlock'
+import { v4 } from 'uuid'
+import Compressor from 'compressorjs'
 
 
 interface Props {
-  editedRecipe: Recipe
+  editedRecipe: Recipe;
+  toggleFetchRecipes: boolean;
+  setToggleFetchRecipes: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const EditRecipe: React.FC<Props> = ({ editedRecipe }) => {
+const EditRecipe: React.FC<Props> = ({ editedRecipe, setToggleFetchRecipes, toggleFetchRecipes }) => {
 
     const { user } = useAuth()
 
     const [tempRecipe, setTempRecipe] = useState<Recipe>(editedRecipe)
+    const [tempImageFile, setTempImageFile] = useState<File | null>(null)
+    const [tempImagePreview, setTempImagePreview] = useState('')
+    const [uploading, setUploading] = useState<boolean>(false)
 
     const listRecipeStepBlocks = tempRecipe.recipeStepList.map((recipeStepBlock) => {
         return <EditRecipeSubBlock setTempRecipe={setTempRecipe} recipeStepBlock={recipeStepBlock} tempRecipe={tempRecipe} key={recipeStepBlock.blockNumber} />
@@ -84,19 +92,55 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe }) => {
         })
     }
 
+    const deleteImage = async ( imgPath: string ) => {
+        const deleteRef = ref(storage, imgPath)
+        await deleteObject(deleteRef)
+    }
+
     const uploadFinishedRecipe = async () => {
         if (
             tempRecipe.recipeName && 
             tempRecipe.ingredientList.length > 0 && 
             tempRecipe.recipeStepList.length > 0
             ) {
-            await setDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', `${tempRecipe.docId}`), tempRecipe)
-            alert('edits uploaded')
+            if (tempImageFile) {
+                if (editedRecipe.imgPath) {
+                    deleteImage(editedRecipe.imgPath)
+                }
+                setUploading(true)
+                const imageRef = ref(storage, `${user?.email}/${tempImageFile.name + v4()}`)
+                new Compressor(tempImageFile, {
+                    quality: 0.4,
+                    success(result) {
+                        uploadBytes(imageRef, result)
+                        .then((snapshot) => getDownloadURL(snapshot.ref))
+                        .then((url) => setTempRecipe(prev => {
+                            return {
+                                ...prev,
+                                imgPath: url
+                            }
+                        }))
+                    }
+                })
+            } else {
+                setDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', `${tempRecipe.docId}`), tempRecipe)
+            }
         } else {
             alert('recipes must have a name and at least one ingredient and step each, edit failed')
         }
     } 
 
+    useEffect(() => {
+        if (uploading) {
+            setDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', `${tempRecipe.docId}`), tempRecipe).then(() => setToggleFetchRecipes(!toggleFetchRecipes))
+            setUploading(false)
+        }
+    }, [tempRecipe.imgPath])
+
+    const handleImgPreview = (e: any) => {
+        setTempImageFile(e.target.files[0])
+        setTempImagePreview(URL.createObjectURL(e.target.files[0]))
+    }
 
   return (
     <>
@@ -106,6 +150,8 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe }) => {
             <button onClick={deleteLastRecipeStepBlock} >Delete Last Recipe Step Block</button>
             <button onClick={addNewIngredientBlock} >Add New Ingredient Block</button>
             <button onClick={deleteLastIngredientBlock} >Delete Last Ingredient Block</button>
+            <input type="file" onChange={handleImgPreview}></input>
+            {tempImagePreview ? <img src={tempImagePreview} style={{height: 150, width: 150}}></img> : null}
         </div>
         <div className="recipe-container">
             <div className="ingredient-list">

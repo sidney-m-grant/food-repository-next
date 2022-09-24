@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/router'
 import { setDoc, doc, } from 'firebase/firestore'
 import { db } from '../firebase'
+import { Button, Card, CardContent, Grid, TextField, Typography } from '@mui/material'
 
 export default function signIn() {
     const { user, signup, login, logout } = useAuth()
@@ -62,10 +63,48 @@ export default function signIn() {
     }
 
   return (
-    <div>
-        <div style={{ margin: 10, padding: 10 }}>
+
+<Grid 
+    container
+    spacing={0}
+    direction="column"
+    alignItems="center"
+    justifyContent="center"
+    style={{ minHeight: "100vh" }}
+>
+    <Grid item xs={3}>
+        <Card sx={{ maxWidth: 450 }} >
+            <CardContent>
+                {user?.email ? user.email : "not signed in"}
+            </CardContent>
+            <CardContent>
+                <TextField variant="outlined" label="Email" value={registerEmail} onChange={(e) => {setRegisterEmail(e.target.value)}}></TextField>
+                <TextField variant="outlined" label="Password" value={registerPassword} onChange={(e) => {setRegisterPassword(e.target.value)}}></TextField>
+                <Button onClick={registerNewUser}>Register</Button>
+            </CardContent>
+            <CardContent>
+                <TextField variant="outlined" label="Email" value={loginEmail} onChange={(e) => {setLoginEmail(e.target.value)}}></TextField>
+                <TextField variant="outlined" label="Password" value={loginPassword} onChange={(e) => {setLoginPassword(e.target.value)}}></TextField>
+                <Button onClick={signIn}>Sign In</Button>
+            </CardContent>
+            <CardContent>
+                <Button onClick={() => {logout()}}>Sign Out</Button>
+                <Button onClick={alreadySignedIn}>Already Signed In</Button>
+            </CardContent>
+            
+        </Card>
+    </Grid>
+</Grid>
+    
+  )
+}
+
+    {/*
+    <Card style={{margin: 10}}>
+        
+        <CardContent>
             {user?.email ? user.email : "not signed in"}
-        </div>
+        </CardContent>
         <div style={{ margin: 10, padding: 10 }}>
             <h3>Register New User</h3>
             <input placeholder="Email" onChange={(e) => {
@@ -74,7 +113,7 @@ export default function signIn() {
             <input placeholder="Password" onChange={(e) => {
                 setRegisterPassword(e.target.value)
             }}></input>
-            <button onClick={registerNewUser}>Register</button>
+            <Button onClick={registerNewUser}>Register</Button>
         </div>
 
         <div style={{ margin: 10, padding: 10 }}>
@@ -85,14 +124,14 @@ export default function signIn() {
             <input placeholder="Password" onChange={(e) => {
                 setLoginPassword(e.target.value)
             }}></input>
-            <button onClick={signIn}>Sign In</button>
+            <Button onClick={signIn}>Sign In</Button>
         </div>
 
-        <button onClick={() => {logout()}} style={{ margin: 10, padding: 10}}>Sign Out</button>
+        <Button onClick={() => {logout()}}>Sign Out</Button>
 
-        <button onClick={alreadySignedIn}>Already Signed In</button>
+        <Button onClick={alreadySignedIn}>Already Signed In</Button>
         
-     </div>
+     </Card>
   )
-}
+} */}
 

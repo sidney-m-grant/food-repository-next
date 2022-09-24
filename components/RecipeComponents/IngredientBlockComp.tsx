@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Ingredient, IngredientBlock, Recipe } from '../pages/recipeList'
+import type { Ingredient, IngredientBlock, Recipe } from '../../pages/recipeList'
 
 interface Props {
     ingBlock: IngredientBlock;

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import type { IngredientBlock, Recipe } from '../pages/recipeList'
+import type { IngredientBlock, Recipe } from '../../pages/recipeList'
 import EditIngredientSub from './EditIngredientSub'
 
 interface Props {
-  setTempRecipe: any /* DispatchWithCallback<React.SetStateAction<Recipe>, Recipe> */;
+  setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>
   ingredientBlock: IngredientBlock;
   tempRecipe: Recipe;
 }

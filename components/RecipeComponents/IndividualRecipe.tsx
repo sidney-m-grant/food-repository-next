@@ -1,7 +1,8 @@
 import React from 'react'
-import type { Recipe } from '../pages/recipeList'
+import type { Recipe } from '../../pages/recipeList'
 import CurrentRecipe from './CurrentRecipe';
-import RecipeButtonBox from './RecipeButtonBox';
+import RecipeButtonBox from '../UIComponents/RecipeButtonBox';
+import { ListItem } from '@mui/material';
 
 interface Props{
     recipe: Recipe;
@@ -38,7 +39,7 @@ const IndividualRecipe: React.FC<Props> = ({ recipe, setCurrentRecipe, setEdited
 }
 
   return (
-    <div className="individual-recipe">
+    <ListItem>
         <RecipeButtonBox 
           handleCurrentRecipeClick={handleCurrentRecipeClick} 
           handleEditedRecipeClick={handleEditedRecipeClick} 
@@ -48,7 +49,7 @@ const IndividualRecipe: React.FC<Props> = ({ recipe, setCurrentRecipe, setEdited
           setToggleRecipeBox={setToggleRecipeBox}
         />
         <h5 style={{ display: 'inline-block', margin: 10 }}>{recipe.recipeName}</h5>
-    </div>
+    </ListItem>
   )
 }
 

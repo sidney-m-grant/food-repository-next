@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import type { RecipeStepBlock, Recipe, RecipeStep } from '../pages/recipeList'
+import type { RecipeStepBlock, Recipe, RecipeStep } from '../../pages/recipeList'
 
 interface Props{
     stepBlock: RecipeStepBlock;

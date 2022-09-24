@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import type { Recipe } from '../pages/recipeList'
+import type { Recipe } from '../../pages/recipeList'
+import { Button, ButtonGroup } from '@mui/material'
 
 interface Props {
     handleCurrentRecipeClick: () => void;
@@ -26,16 +27,16 @@ const RecipeButtonBox: React.FC<Props> = ({ handleCurrentRecipeClick, handleDele
     }
 
   return (
-    <div style={{ display: 'inline-block', margin: 10 }}>
-        {toggleRecipeBox != recipe.docId ? <button onClick={handleToggleClick}>Show More</button> : ( 
-            <div>
-                <button onClick={handleShowLess}>Show Less</button>
-                <button onClick={handleCurrentRecipeClick}>Set as Current Recipe</button>
-                <button onClick={handleEditedRecipeClick}>Edit Recipe</button>
-                <button onClick={handleDelete}>Delete Recipe</button>
-            </div>
+    <>
+        {toggleRecipeBox != recipe.docId ? <Button onClick={handleToggleClick}>Show More</Button> : ( 
+            <ButtonGroup orientation="vertical">
+                <Button onClick={handleShowLess}>Show Less</Button>
+                <Button onClick={handleCurrentRecipeClick}>Set as Current Recipe</Button>
+                <Button onClick={handleEditedRecipeClick}>Edit Recipe</Button>
+                <Button onClick={handleDelete}>Delete Recipe</Button>
+            </ButtonGroup>
         )}
-    </div>    
+    </>    
   )
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Ingredient, IngredientBlock } from '../pages/recipeList';
+import { Ingredient, IngredientBlock } from '../../pages/recipeList';
 
 interface Props {
     setTempIngredientBlock: React.Dispatch<React.SetStateAction<IngredientBlock>>
@@ -12,7 +12,7 @@ const EditIngredientSub: React.FC<Props> = ({ setTempIngredientBlock, ingredient
     const [editedAmount, setEditedAmount] = useState<string>(ingredient.ingredientAmount)
     const [editedUnit, setEditedUnit] = useState<string>(ingredient.ingredientUnit)
 
-    const handleBlur = () => {
+    useEffect(() => {
         let tempArray = ingredientBlock.ingredients
         tempArray[ingredient.ingredientId-1].ingredientName = editedName;
         tempArray[ingredient.ingredientId-1].ingredientAmount = editedAmount;
@@ -23,19 +23,19 @@ const EditIngredientSub: React.FC<Props> = ({ setTempIngredientBlock, ingredient
                 ingredientList: tempArray
             }
         })
-    }
+    }, [editedName, editedAmount, editedUnit])
 
     useEffect(() => {
         setEditedName(ingredient.ingredientName)
         setEditedAmount(ingredient.ingredientAmount)
         setEditedUnit(ingredient.ingredientUnit)
-    }, [ingredientBlock])
+    }, [ingredientBlock]) 
 
   return (
     <div>
-        <input onChange={(e) => {setEditedName(e.target.value)}} onBlur={handleBlur} value={editedName} placeholder={ingredient.ingredientName}></input>
-        <input onChange={(e) => {setEditedAmount(e.target.value)}} onBlur={handleBlur} value={editedAmount} placeholder={ingredient.ingredientAmount}></input>
-        <input onChange={(e) => {setEditedUnit(e.target.value)}} onBlur={handleBlur} value={editedUnit} placeholder={ingredient.ingredientUnit}></input>
+        <input onChange={(e) => {setEditedName(e.target.value)}} value={editedName} placeholder={ingredient.ingredientName}></input>
+        <input onChange={(e) => {setEditedAmount(e.target.value)}} value={editedAmount} placeholder={ingredient.ingredientAmount}></input>
+        <input onChange={(e) => {setEditedUnit(e.target.value)}} value={editedUnit} placeholder={ingredient.ingredientUnit}></input>
     </div>
   )
 }
