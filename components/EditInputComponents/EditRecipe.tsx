@@ -9,6 +9,7 @@ import EditRecipeSubBlock from './EditRecipeSubBlock'
 import EditIngredientSubBlock from './EditIngredientSubBlock'
 import { v4 } from 'uuid'
 import Compressor from 'compressorjs'
+import { ButtonGroup, Card, Grid, Button, TextField} from '@mui/material'
 
 
 interface Props {
@@ -103,11 +104,11 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe, setToggleFetchRecipes, togg
             tempRecipe.ingredientList.length > 0 && 
             tempRecipe.recipeStepList.length > 0
             ) {
+            setUploading(true)
             if (tempImageFile) {
                 if (editedRecipe.imgPath) {
                     deleteImage(editedRecipe.imgPath)
                 }
-                setUploading(true)
                 const imageRef = ref(storage, `${user?.email}/${tempImageFile.name + v4()}`)
                 new Compressor(tempImageFile, {
                     quality: 0.4,
@@ -123,7 +124,7 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe, setToggleFetchRecipes, togg
                     }
                 })
             } else {
-                setDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', `${tempRecipe.docId}`), tempRecipe)
+                setDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', `${tempRecipe.docId}`), tempRecipe).then(() => setUploading(false))
             }
         } else {
             alert('recipes must have a name and at least one ingredient and step each, edit failed')
@@ -138,31 +139,41 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe, setToggleFetchRecipes, togg
     }, [tempRecipe.imgPath])
 
     const handleImgPreview = (e: any) => {
-        setTempImageFile(e.target.files[0])
-        setTempImagePreview(URL.createObjectURL(e.target.files[0]))
+        if (e.target.files[0]) {
+            setTempImageFile(e.target.files[0])
+            setTempImagePreview(URL.createObjectURL(e.target.files[0]))
+        } else {
+            setTempImageFile(null)
+            setTempImagePreview('')
+        }
     }
 
   return (
     <>
-        <div>
+        <Card>
             {editedRecipe.recipeName}
-            <button onClick={addNewRecipeStepBlock} >Add New Recipe Step Block</button>
-            <button onClick={deleteLastRecipeStepBlock} >Delete Last Recipe Step Block</button>
-            <button onClick={addNewIngredientBlock} >Add New Ingredient Block</button>
-            <button onClick={deleteLastIngredientBlock} >Delete Last Ingredient Block</button>
+            <ButtonGroup>
+                <Button style={{ fontSize: 12 }} onClick={addNewRecipeStepBlock} >Add New Recipe Step Block</Button>
+                <Button onClick={deleteLastRecipeStepBlock} >Delete Last Recipe Step Block</Button>
+                <Button onClick={addNewIngredientBlock} >Add New Ingredient Block</Button>
+                <Button onClick={deleteLastIngredientBlock} >Delete Last Ingredient Block</Button>
+            </ButtonGroup> <br />
+            <Button onClick={uploadFinishedRecipe} >Upload Recipe</Button>
             <input type="file" onChange={handleImgPreview}></input>
             {tempImagePreview ? <img src={tempImagePreview} style={{height: 150, width: 150}}></img> : null}
-        </div>
-        <div className="recipe-container">
-            <div className="ingredient-list">
-                {listIngredientBlocks}
-            </div>
-            <div className="recipe-steps">
-                {listRecipeStepBlocks}
-            </div>
-        </div>
+            { uploading ? <h3>Uploading, please do not leave the page</h3> : null}
+        </Card>
+        <Card sx={{ margin: 5, padding: 5 }}>
+            <Grid container spacing={0}>
+                <Grid item xs={7}>
+                    {listIngredientBlocks}
+                </Grid>
+                <Grid item xs={5}>
+                    {listRecipeStepBlocks}
+                </Grid>    
+            </Grid>
+        </Card>
         <CurrentRecipe currentRecipe={tempRecipe} />
-        <button onClick={uploadFinishedRecipe}>Upload Finished Recipe</button>
     </>
   )
 }

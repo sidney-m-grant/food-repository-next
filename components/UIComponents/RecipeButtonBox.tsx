@@ -29,7 +29,7 @@ const RecipeButtonBox: React.FC<Props> = ({ handleCurrentRecipeClick, handleDele
   return (
     <>
         {toggleRecipeBox != recipe.docId ? <Button onClick={handleToggleClick}>Show More</Button> : ( 
-            <ButtonGroup orientation="vertical">
+            <ButtonGroup>
                 <Button onClick={handleShowLess}>Show Less</Button>
                 <Button onClick={handleCurrentRecipeClick}>Set as Current Recipe</Button>
                 <Button onClick={handleEditedRecipeClick}>Edit Recipe</Button>

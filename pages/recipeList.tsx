@@ -11,7 +11,7 @@ import Fuse from 'fuse.js'
 import Link from 'next/link'
 import EditRecipe from '../components/EditInputComponents/EditRecipe'
 import { deleteObject, ref } from 'firebase/storage'
-import { List } from '@mui/material'
+import { List, TextField, Card, Button } from '@mui/material'
 
   export type RecipeStep = {
     recipeStepText: string;
@@ -175,28 +175,28 @@ export const RecipeList = () => {
 
     return (
     <>
-        <div style={{ margin: 10, padding: 10}}>
-            <input placeholder="Search Bar" onChange={(e) => setSearchInput(e.target.value)}></input>
-        </div>
-        <div className="recipe-list-container">
+        <Card style={{ width: 217, margin: 10, padding: 10}}>
+            <TextField placeholder="Search Bar" onChange={(e) => setSearchInput(e.target.value)}></TextField>
+        </Card>
+        <Card style={{ margin: 10, padding: 10}}>
             {currentRecipe.recipeName ? <CurrentRecipe currentRecipe={currentRecipe}/> : null}
             {editedRecipe.recipeName ? <EditRecipe editedRecipe={editedRecipe} setToggleFetchRecipes={setToggleFetchRecipes} toggleFetchRecipes={toggleFetchRecipes}/> : null}
             <List>
                 {listItems}
             </List>
-        </div>
-        <div className="friend-radio-options-container">
+        </Card>
+        <Card style={{ width: 217, margin: 10, padding: 10}}>
             {listFriendRadioOptions}
-        </div>
-        <div style={{ margin: 10, padding: 10}}>
+        </Card>
+        <Card style={{ width: 250, margin: 10, padding: 10}}>
             <Link href="/recipeInput">
-                <button>To Recipe Input</button>
+                <Button>To Recipe Input</Button>
             </Link>
             <Link href="/social">
-                <button>To Social</button>
+                <Button>To Social</Button>
             </Link>
             <SignOutButton />
-        </div>
+        </Card>
     </>
     )
 }

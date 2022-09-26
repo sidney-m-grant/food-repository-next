@@ -48,7 +48,8 @@ const IndividualRecipe: React.FC<Props> = ({ recipe, setCurrentRecipe, setEdited
           toggleRecipeBox={toggleRecipeBox}
           setToggleRecipeBox={setToggleRecipeBox}
         />
-        <h5 style={{ display: 'inline-block', margin: 10 }}>{recipe.recipeName}</h5>
+        <h5 onClick={handleCurrentRecipeClick} style={{ display: 'inline-block', margin: 10 }}>{recipe.recipeName}</h5>
+        
     </ListItem>
   )
 }

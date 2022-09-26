@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import FriendRequest from '../components/FriendRequest'
 import SignOutButton from '../components/UIComponents/SignOutButton'
 import Link from 'next/link'
+import { Card, TextField, Typography, Button } from '@mui/material'
 
 
 const social = () => {
@@ -90,35 +91,33 @@ const social = () => {
     }) 
 
     const friendList = listOfFriends.map((friend) => {
-      return <h5 key={listOfFriends.indexOf(friend)}>{friend}</h5>
+      return <Typography key={listOfFriends.indexOf(friend)}>{friend}</Typography>
   })
 
   return (
     <>
-        <div style={{ margin: 10, padding: 10 }}>
-            <input placeholder="input a friends email" onChange={(e) => {setFriendRequestInput(e.target.value)}}></input>
-            <button onClick={sendFriendRequest}>Send Friend Request</button>
-        </div>
-
-        <div className="social-list">
-          <h5>Friend Requests</h5>
+        <Card style={{ width: 217, margin: 10, padding: 10 }}>
+            <TextField placeholder="input a friends email" onChange={(e) => {setFriendRequestInput(e.target.value)}}></TextField>
+            <Button onClick={sendFriendRequest}>Send Friend Request</Button>
+        </Card>
+        <Card style={{ width: 250, margin: 10, padding: 10 }}>
+          <Typography>Friend Requests</Typography>
            {friendRequestList}
-        </div>
-        <div className="social-list">
-          <h5>Friend List</h5>
+        </Card>
+        <Card style={{ width: 250, margin: 10, padding: 10 }}>
+          <Typography>Friend List</Typography>
           {friendList}
-        </div>
+        </Card>
         
-        <div style={{ margin: 10, padding: 10 }}>
-          <Link href="/recipeList">
-              <button>To Recipe List</button>
-          </Link>
-          <Link href="/social">
-              <button>To Social</button>
-          </Link>
-
-          <SignOutButton />
-        </div>
+        <Card style={{ width: 250, margin: 10, padding: 10}}>
+            <Link href="/recipeInput">
+                <Button>To Recipe Input</Button>
+            </Link>
+            <Link href="/recipeList">
+                <Button>To Recipe List</Button>
+            </Link>
+            <SignOutButton />
+        </Card>
     </>
   )
 }

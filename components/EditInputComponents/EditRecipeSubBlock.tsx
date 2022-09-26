@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import { Card, IconButton, TextField, Tooltip } from '@mui/material';
+import React, { useEffect, useState } from 'react'
 import type { RecipeStepBlock , Recipe } from '../../pages/recipeList';
 import EditRecipeSub from './EditRecipeSub'
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 
 interface Props {
   setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>
@@ -16,7 +19,7 @@ const EditRecipeSubBlock: React.FC<Props> = ({ setTempRecipe, recipeStepBlock, t
     return <EditRecipeSub setTempRecipeStepBlock={setTempRecipeStepBlock} recipeStep={recipeStep} recipeStepBlock={recipeStepBlock} key={recipeStep.recipeStepNumber}/>
   })
 
-  const handleAddRecipeStepBlockEdits = () => {
+  useEffect(() => {
     let tempRecipeStepList = tempRecipe.recipeStepList;
     tempRecipeStepList[recipeStepBlock.blockNumber] = tempRecipeStepBlock
     tempRecipeStepList[recipeStepBlock.blockNumber].for = forStatement
@@ -26,7 +29,16 @@ const EditRecipeSubBlock: React.FC<Props> = ({ setTempRecipe, recipeStepBlock, t
           recipeStepList: tempRecipeStepList
       }
     })
-  }
+  }, [tempRecipeStepBlock])
+
+  useEffect(() => {
+    setTempRecipeStepBlock((prev) => {
+      return {
+        ...prev,
+        for: forStatement
+      }
+    })
+  }, [forStatement])
 
   const handleAddTempRecipeStep = () => {
     let tempRecipeAddition = tempRecipeStepBlock;
@@ -51,13 +63,22 @@ const handleDeleteLastRecipeStep = () => {
 }
 
   return (
-    <div>
-      <input onChange={(e) => setForStatement(e.target.value)} value={forStatement} placeholder={recipeStepBlock.for} />
+    <Card sx={{ margin: 1, padding: 1}}>
+      <TextField size="small" helperText="Recipe steps for..." onChange={(e) => setForStatement(e.target.value)} value={forStatement} placeholder={recipeStepBlock.for} />
+      <Tooltip title="Add Step">
+        <IconButton>
+          <AddCircleIcon onClick={handleAddTempRecipeStep}></AddCircleIcon>
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Delete Last Step">
+         <IconButton>
+           <RemoveCircleIcon onClick={handleDeleteLastRecipeStep}></RemoveCircleIcon>
+         </IconButton>
+      </Tooltip>
+      
+      
       {listRecipeSteps}
-      <button onClick={handleAddRecipeStepBlockEdits} >Save Changes</button>
-      <button onClick={handleAddTempRecipeStep} >Add Step</button>
-      <button onClick={handleDeleteLastRecipeStep} >Delete Last Step</button>
-    </div>
+    </Card>
   )
 }
 

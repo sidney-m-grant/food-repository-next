@@ -9,6 +9,7 @@ import EditIngredientSubBlock from './EditIngredientSubBlock'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { v4 } from 'uuid'
 import Compressor from 'compressorjs'
+import { ButtonGroup, Card, Grid, Button, TextField} from '@mui/material'
 
 interface Props {
     dummyRecipe: Recipe
@@ -19,7 +20,6 @@ const RecipeInputComp: React.FC<Props> = ({ dummyRecipe }) => {
     const { user } = useAuth()
 
     const [tempRecipe, setTempRecipe] = useState<Recipe>(dummyRecipe)
-    const [tempRecipeName, setTempRecipeName] = useState<string>('')
     const [tempImageFile, setTempImageFile] = useState<File | null>(null)
     const [tempImagePreview, setTempImagePreview] = useState('')
     const [uploading, setUploading] = useState<boolean>(false)
@@ -86,20 +86,11 @@ const RecipeInputComp: React.FC<Props> = ({ dummyRecipe }) => {
         })
     }
 
-    const handleBlur = () => {
-        setTempRecipe(prev => {
-            return {
-                ...prev,
-                recipeName: tempRecipeName
-            }
-        })
-    }
-
     const uploadRecipe = async () => {
         if (tempRecipe.recipeName && tempRecipe.recipeStepList.length > 0 && tempRecipe.ingredientList.length > 0) {
+            setUploading(true)
             if (confirm('Upload Recipe?')) {
                 if (tempImageFile) {
-                    setUploading(true)
                     const imageRef = ref(storage, `${user?.email}/${tempImageFile.name + v4()}`)
                     new Compressor(tempImageFile, {
                         quality: 0.2,
@@ -116,7 +107,7 @@ const RecipeInputComp: React.FC<Props> = ({ dummyRecipe }) => {
                     })
                     
                 } else {
-                    await addDoc(collection(db, `${user?.email}`, 'recipeCollection', 'recipes'), tempRecipe)
+                    await addDoc(collection(db, `${user?.email}`, 'recipeCollection', 'recipes'), tempRecipe).then(() => setUploading(false))  
                 }
             }
         }
@@ -129,40 +120,41 @@ const RecipeInputComp: React.FC<Props> = ({ dummyRecipe }) => {
 
     useEffect(() => {
         if (uploading) {
-            addDoc(collection(db, `${user?.email}`, 'recipeCollection', 'recipes'), tempRecipe)
-            setUploading(false)
+            addDoc(collection(db, `${user?.email}`, 'recipeCollection', 'recipes'), tempRecipe).then(() => setUploading(false))
         }
     }, [tempRecipe.imgPath])
 
-{/*onChange={(e) => {setTempRecipeName(e.target.value)}} onBlur={handleBlur} value={tempRecipeName} */} 
-
   return (
     <>
-        <div>
-            <input value={tempRecipe.recipeName} onChange={(e) => {setTempRecipe(prev => {
+        <Card sx={{ margin: 5, padding: 5 }}>
+            <TextField helperText="Recipe Name" value={tempRecipe.recipeName} onChange={(e) => {setTempRecipe(prev => {
                 return {
                     ...prev,
                     recipeName: e.target.value
                 }
-            })}}></input>
-            {tempRecipeName}
-            <button onClick={addNewRecipeStepBlock} >Add New Recipe Step Block</button>
-            <button onClick={deleteLastRecipeStepBlock} >Delete Last Recipe Step Block</button>
-            <button onClick={addNewIngredientBlock} >Add New Ingredient Block</button>
-            <button onClick={deleteLastIngredientBlock} >Delete Last Ingredient Block</button>
-            <input type="file" onChange={handleImgPreview}></input>
-            {tempImagePreview ? <img src={tempImagePreview} style={{height: 150, width: 150}}></img> : null}
-        </div>
-        <div className="recipe-container">
-            <div className="ingredient-list">
-                {listIngredientBlocks}
-            </div>
-            <div className="recipe-steps">
-                {listRecipeStepBlocks}
-            </div>
-        </div>
+            })}}></TextField>
+            <ButtonGroup>
+                <Button style={{ fontSize: 12 }} onClick={addNewRecipeStepBlock} >Add New Recipe Step Block</Button>
+                <Button onClick={deleteLastRecipeStepBlock} >Delete Last Recipe Step Block</Button>
+                <Button onClick={addNewIngredientBlock} >Add New Ingredient Block</Button>
+                <Button onClick={deleteLastIngredientBlock} >Delete Last Ingredient Block</Button>
+            </ButtonGroup>
+                <Button onClick={uploadRecipe} >Upload Recipe</Button>
+                <input type="file" onChange={handleImgPreview}></input>
+                {tempImagePreview ? <img src={tempImagePreview} style={{height: 150, width: 150}}></img> : null}
+                { uploading ? <h3>Uploading, please do not leave the page</h3> : null}
+        </Card>
+        <Card sx={{ margin: 5, padding: 5 }}>
+            <Grid container spacing={0}>
+                <Grid item xs={7}>
+                    {listIngredientBlocks}
+                </Grid>
+                <Grid item xs={5}>
+                    {listRecipeStepBlocks}
+                </Grid>    
+            </Grid>
+        </Card>
         <CurrentRecipe currentRecipe={tempRecipe} />
-        <button onClick={uploadRecipe} >Upload Recipe</button>
     </>
   )
 }

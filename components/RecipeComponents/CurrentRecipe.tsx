@@ -2,6 +2,7 @@ import React from 'react'
 import type { Recipe, RecipeStep, Ingredient, RecipeStepBlock, IngredientBlock } from '../../pages/recipeList'
 import RecipeStepBlockComp from './RecipeStepBlockComp'
 import IngredientBlockComp from './IngredientBlockComp'
+import { ButtonGroup, Card, Grid, Button, TextField, Typography, CardMedia} from '@mui/material'
 
 interface Props {
   currentRecipe: Recipe
@@ -18,7 +19,38 @@ const CurrentRecipe: React.FC<Props> = ({ currentRecipe }) => {
     })
 
   return (
-    <div className="recipe-container">
+    <Card>
+      <Grid container spacing={2}>
+        <Grid item>
+          <Card sx={{ margin: 3, padding: 3, width: 200, height: 200, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Typography sx={{ fontSize: 20}}>
+              {currentRecipe.recipeName}
+            </Typography> 
+          </Card>
+        </Grid>
+        <Grid item>
+            <Card sx={{ margin: 3, padding: 3, width: 200, height: 200, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              { currentRecipe.imgPath ? <CardMedia component="img" image={currentRecipe.imgPath} sx={{ height: 180, width: 180 }} /> : null }
+          </Card>
+        </Grid>
+      </Grid>
+      
+      
+        <Grid container spacing={0}>
+            <Grid item xs={4}>
+              <Card sx={{ margin: 3, padding: 3}}>
+                 {listIngredients}
+              </Card>
+            </Grid>
+            <Grid item xs={8}>
+              <Card sx={{ margin: 3, padding: 3}}>
+                 {listRecipeSteps}
+              </Card>
+            </Grid>    
+        </Grid>
+    </Card>
+  )
+   {/* <div className="recipe-container">
         {currentRecipe.recipeName}
         {currentRecipe.imgPath ? 
           <img style={{height: 150, width: 150}} src={currentRecipe.imgPath}></img> : 
@@ -30,8 +62,7 @@ const CurrentRecipe: React.FC<Props> = ({ currentRecipe }) => {
         <div className="recipe-steps">
           {listRecipeSteps}
         </div>
-    </div>
-  )
+      </div> */}
 }
 
 export default CurrentRecipe

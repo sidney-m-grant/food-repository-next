@@ -1,3 +1,4 @@
+import { TextField } from '@mui/material';
 import React, { useState, useEffect } from 'react'
 import { Ingredient, IngredientBlock } from '../../pages/recipeList';
 
@@ -33,9 +34,9 @@ const EditIngredientSub: React.FC<Props> = ({ setTempIngredientBlock, ingredient
 
   return (
     <div>
-        <input onChange={(e) => {setEditedName(e.target.value)}} value={editedName} placeholder={ingredient.ingredientName}></input>
-        <input onChange={(e) => {setEditedAmount(e.target.value)}} value={editedAmount} placeholder={ingredient.ingredientAmount}></input>
-        <input onChange={(e) => {setEditedUnit(e.target.value)}} value={editedUnit} placeholder={ingredient.ingredientUnit}></input>
+        <TextField helperText="name" onChange={(e) => {setEditedName(e.target.value)}} value={editedName} placeholder={ingredient.ingredientName}></TextField>
+        <TextField helperText="amount" onChange={(e) => {setEditedAmount(e.target.value)}} value={editedAmount} placeholder={ingredient.ingredientAmount}></TextField>
+        <TextField helperText="unit" onChange={(e) => {setEditedUnit(e.target.value)}} value={editedUnit} placeholder={ingredient.ingredientUnit}></TextField>
     </div>
   )
 }

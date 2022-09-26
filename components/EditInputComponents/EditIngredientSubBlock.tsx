@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
+import { Card, TextField, Tooltip, IconButton } from '@mui/material';
+import React, { useEffect, useState } from 'react'
 import type { IngredientBlock, Recipe } from '../../pages/recipeList'
 import EditIngredientSub from './EditIngredientSub'
+import AddCircleIcon from '@mui/icons-material/AddCircle'
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
+
 
 interface Props {
   setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>
@@ -16,7 +20,7 @@ const EditIngredientSubBlock: React.FC<Props> = ({ setTempRecipe, ingredientBloc
     return <EditIngredientSub setTempIngredientBlock={setTempIngredientBlock} ingredient={ingredient} ingredientBlock={ingredientBlock} key={ingredient.ingredientId}/>
   })
 
-  const handleAddIngredientBlockEdits = () => {
+  useEffect(() => {
     let tempIngredientList = tempRecipe.ingredientList;
     tempIngredientList[ingredientBlock.blockNumber] = tempIngredientBlock
     tempIngredientList[ingredientBlock.blockNumber].for = forStatement
@@ -26,7 +30,18 @@ const EditIngredientSubBlock: React.FC<Props> = ({ setTempRecipe, ingredientBloc
           ingredientList: tempIngredientList
       }
     })
-  }
+  }, [tempIngredientBlock])
+
+  useEffect(() => {
+    setTempIngredientBlock((prev) => {
+      return {
+        ...prev,
+        for: forStatement
+      }
+    })
+  }, [forStatement])
+
+  
 
   const handleAddTempIngredient = () => {
     let tempIngredientAddition = tempIngredientBlock
@@ -51,13 +66,20 @@ const handleDeleteLastIngredient = () => {
 }
 
   return (
-    <div>
-      <input onChange={(e) => setForStatement(e.target.value)} value={forStatement} placeholder={ingredientBlock.for} />
+    <Card sx={{ margin: 1, padding: 1}}>
+      <TextField size="small" helperText="Ingredient block for..." onChange={(e) => setForStatement(e.target.value)} value={forStatement} placeholder={ingredientBlock.for} />
+      <Tooltip title="Add Ingredient">
+        <IconButton>
+          <AddCircleIcon onClick={handleAddTempIngredient}></AddCircleIcon>
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Delete Last Ingredient">
+         <IconButton>
+           <RemoveCircleIcon onClick={handleDeleteLastIngredient}></RemoveCircleIcon>
+         </IconButton>
+      </Tooltip>
       {listIngredients}
-      <button onClick={handleAddIngredientBlockEdits} >Save Changes</button>
-      <button onClick={handleAddTempIngredient} >Add Ingredient</button>
-      <button onClick={handleDeleteLastIngredient} >Delete Last Ingredient</button>
-    </div>
+    </Card>
   )
 }
 

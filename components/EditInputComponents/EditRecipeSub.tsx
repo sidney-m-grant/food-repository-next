@@ -1,3 +1,4 @@
+import { TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import type { Recipe, RecipeStep, RecipeStepBlock } from '../../pages/recipeList'
 
@@ -27,7 +28,7 @@ useEffect(() => {
 
   return (
     <div>
-        <input onChange={(e) => {setEditedText(e.target.value)}} value={editedText} placeholder={recipeStep.recipeStepText}/>
+        <TextField sx={{width : 490}} onChange={(e) => {setEditedText(e.target.value)}} value={editedText} multiline placeholder={recipeStep.recipeStepText}/>
     </div>
   )
 }
