@@ -1,24 +1,23 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-import { AuthContextProvider } from '../context/AuthContext'
-import ProtectedRoute from '../components/ProtectedRoute'
-import { useRouter } from 'next/router'
-import { createTheme, ThemeProvider } from '@mui/material'
+import "../styles/globals.css";
+import type { AppProps } from "next/app";
+import { AuthContextProvider } from "../context/AuthContext";
+import ProtectedRoute from "../components/ProtectedRoute";
+import { useRouter } from "next/router";
+import { createTheme, ThemeProvider } from "@mui/material";
 
-const noAuthRequired = ['/signIn']
+const noAuthRequired = ["/signIn"];
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#000000'
-    }
-  }
-})
+      main: "#000000",
+    },
+  },
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
-  
-  const router = useRouter()
-  
+  const router = useRouter();
+
   return (
     <ThemeProvider theme={theme}>
       <AuthContextProvider>
@@ -31,11 +30,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ProtectedRoute>
             <Component {...pageProps} />
           </ProtectedRoute>
-        )
-      }
-     </AuthContextProvider>
+        )}
+      </AuthContextProvider>
     </ThemeProvider>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;

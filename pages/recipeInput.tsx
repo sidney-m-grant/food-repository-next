@@ -117,7 +117,7 @@ const RecipeInput = () => {
   };
 
   const handleIngredientSplit = () => {
-    const tempArray = splitArrayInput.split(/\n/);
+    const tempArray = splitArrayInput.trim().split(/\n/);
     let tempAmount = "";
     let tempUnit: any = "";
     let tempName = "";
@@ -223,6 +223,10 @@ const RecipeInput = () => {
     console.log(temp.ingredientList[0]);
     setTest(temp);
   };
+  /**
+   * [1, 2, 3]
+   *
+   */
   /*
     const handleTest = () => {
         const testRecipe: Recipe = {
