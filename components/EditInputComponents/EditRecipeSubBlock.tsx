@@ -1,4 +1,4 @@
-import { Card, IconButton, TextField, Tooltip } from '@mui/material';
+import { Card, IconButton, TextField, Tooltip, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import type { RecipeStepBlock , Recipe } from '../../pages/recipeList';
 import EditRecipeSub from './EditRecipeSub'
@@ -6,12 +6,14 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 
 interface Props {
-  setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>
+  setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>;
   recipeStepBlock: RecipeStepBlock;
   tempRecipe: Recipe;
+  splitArray: string[];
+
 }
 
-const EditRecipeSubBlock: React.FC<Props> = ({ setTempRecipe, recipeStepBlock, tempRecipe }) => {
+const EditRecipeSubBlock: React.FC<Props> = ({ setTempRecipe, recipeStepBlock, tempRecipe, splitArray }) => {
   const [forStatement, setForStatement] = useState<string>(recipeStepBlock.for)
   const [tempRecipeStepBlock, setTempRecipeStepBlock] = useState<RecipeStepBlock>(recipeStepBlock)
 
@@ -26,7 +28,7 @@ const EditRecipeSubBlock: React.FC<Props> = ({ setTempRecipe, recipeStepBlock, t
     setTempRecipe((prev: Recipe) => {
       return {
           ...prev,
-          recipeStepList: tempRecipeStepList
+          recipeStepList: tempRecipeStepList,
       }
     })
   }, [tempRecipeStepBlock])
@@ -40,9 +42,24 @@ const EditRecipeSubBlock: React.FC<Props> = ({ setTempRecipe, recipeStepBlock, t
     })
   }, [forStatement])
 
+  useEffect(() => {
+    setForStatement(recipeStepBlock.for)
+  }, [recipeStepBlock])
+
   const handleAddTempRecipeStep = () => {
     let tempRecipeAddition = tempRecipeStepBlock;
-    tempRecipeAddition.steps.push({ recipeStepNumber: tempRecipeAddition.steps.length+1, recipeStepText: '' })
+    tempRecipeAddition.steps.push({ recipeStepNumber: tempRecipeAddition.steps.length+1, recipeStepText: '', recipeStepType: 'text' })
+    setTempRecipeStepBlock(prev => {
+        return {
+            ...prev,
+            steps : tempRecipeAddition.steps
+        }
+    })
+}
+
+const handleAddTempRecipeStepImg = () => {
+  let tempRecipeAddition = tempRecipeStepBlock;
+    tempRecipeAddition.steps.push({ recipeStepNumber: tempRecipeAddition.steps.length+1, recipeStepText: 'image', recipeStepType: 'file' })
     setTempRecipeStepBlock(prev => {
         return {
             ...prev,
@@ -62,21 +79,35 @@ const handleDeleteLastRecipeStep = () => {
     })
 }
 
+const addSplitRecipeSteps = () => {
+  let tempRecipeAddition = tempRecipeStepBlock;
+  tempRecipeAddition.steps = []
+  for (let i = 0; i < splitArray.length; i++) {
+    tempRecipeAddition.steps.push({ recipeStepNumber: tempRecipeAddition.steps.length+1, recipeStepText: `${splitArray[i]}`, recipeStepType: 'text' })
+  }
+  setTempRecipeStepBlock(prev => {
+      return {
+          ...prev,
+          steps : tempRecipeAddition.steps
+      }
+  })
+}
+
   return (
     <Card sx={{ margin: 1, padding: 1}}>
       <TextField size="small" helperText="Recipe steps for..." onChange={(e) => setForStatement(e.target.value)} value={forStatement} placeholder={recipeStepBlock.for} />
       <Tooltip title="Add Step">
-        <IconButton>
-          <AddCircleIcon onClick={handleAddTempRecipeStep}></AddCircleIcon>
+        <IconButton onClick={handleAddTempRecipeStep}>
+          <AddCircleIcon></AddCircleIcon>
         </IconButton>
       </Tooltip>
       <Tooltip title="Delete Last Step">
-         <IconButton>
-           <RemoveCircleIcon onClick={handleDeleteLastRecipeStep}></RemoveCircleIcon>
+         <IconButton onClick={handleDeleteLastRecipeStep}>
+           <RemoveCircleIcon></RemoveCircleIcon>
          </IconButton>
       </Tooltip>
-      
-      
+      <Button onClick={addSplitRecipeSteps} >Add Split</Button>
+      <Button onClick={handleAddTempRecipeStepImg} >Add Image</Button>
       {listRecipeSteps}
     </Card>
   )

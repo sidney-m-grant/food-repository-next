@@ -10,6 +10,7 @@ import EditIngredientSubBlock from './EditIngredientSubBlock'
 import { v4 } from 'uuid'
 import Compressor from 'compressorjs'
 import { ButtonGroup, Card, Grid, Button, TextField} from '@mui/material'
+import type { IngredientSplit } from './RecipeInputComp'
 
 
 interface Props {
@@ -18,21 +19,60 @@ interface Props {
   setToggleFetchRecipes: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+const unitList = ['teaspoons', 'tablespoons', 'tbsp', 'tablespoon', 'cup', 'gram', 'kilogram', 'teaspoon', 'tsp', 'liter', 'lb', 'pound', 'container', 'gallon', 'quart', 'pint', 'fl oz', 'oz', 'ounces', 'handful', 'dash', 'milliters']
+const unitRegex = new RegExp('\\b(' + unitList.join('|') + ')\\b', 'g');
+
 const EditRecipe: React.FC<Props> = ({ editedRecipe, setToggleFetchRecipes, toggleFetchRecipes }) => {
 
     const { user } = useAuth()
 
-    const [tempRecipe, setTempRecipe] = useState<Recipe>(editedRecipe)
-    const [tempImageFile, setTempImageFile] = useState<File | null>(null)
-    const [tempImagePreview, setTempImagePreview] = useState('')
-    const [uploading, setUploading] = useState<boolean>(false)
+    const [tempRecipe, setTempRecipe] = useState<Recipe>(editedRecipe);
+    const [tempImageFile, setTempImageFile] = useState<File | null>(null);
+    const [tempImagePreview, setTempImagePreview] = useState('');
+    const [uploading, setUploading] = useState<boolean>(false);
+    const [splitArrayInput, setSplitArrayInput] = useState('')
+    const [splitArray, setSplitArray] = useState<string[]>([]);
+    const [splitIngredientArray, setSplitIngredientArray] = useState<IngredientSplit[]>([])
+
+    const handleRecipeStepSplit = () => {
+        const tempArray = splitArrayInput.split(/\n/)
+        setSplitArray(tempArray)
+    }
+
+    const handleIngredientSplit = () => {
+        const tempArray = splitArrayInput.split(/\n/)
+        const tempAmountArray = []
+        const tempUnitArray: any = []
+        const tempNameArray = []
+        const tempObjectArray = []
+        for (var i = 0; i < tempArray.length; i++) {
+            var match: any = tempArray[i].match(/[A-Za-z]/)
+            var index = tempArray[i].indexOf(match[0])
+            tempAmountArray[i] = tempArray[i].substring(0, index).trim()
+            if (tempArray[i].match(unitRegex)) {
+                const temp: any = tempArray[i].match(unitRegex)
+                tempUnitArray[i] = temp[0]
+                index = index + tempUnitArray[i].length
+            } else {
+                tempUnitArray[i] = ''
+            }
+            tempNameArray[i] = tempArray[i].substring(index, tempArray[i].length).trim()
+            index = index + tempArray[i].length
+            tempObjectArray[i] = {
+                amount: tempAmountArray[i],
+                unit: tempUnitArray[i],
+                name: tempNameArray[i],
+            }
+        }
+        setSplitIngredientArray(tempObjectArray)
+    }
 
     const listRecipeStepBlocks = tempRecipe.recipeStepList.map((recipeStepBlock) => {
-        return <EditRecipeSubBlock setTempRecipe={setTempRecipe} recipeStepBlock={recipeStepBlock} tempRecipe={tempRecipe} key={recipeStepBlock.blockNumber} />
+        return <EditRecipeSubBlock splitArray={splitArray} setTempRecipe={setTempRecipe} recipeStepBlock={recipeStepBlock} tempRecipe={tempRecipe} key={recipeStepBlock.blockNumber} />
     })
 
     const listIngredientBlocks = tempRecipe.ingredientList.map((ingredientBlock) => {
-        return <EditIngredientSubBlock setTempRecipe={setTempRecipe} ingredientBlock={ingredientBlock} tempRecipe={tempRecipe} key={ingredientBlock.blockNumber} />
+        return <EditIngredientSubBlock splitIngredientArray={splitIngredientArray} setTempRecipe={setTempRecipe} ingredientBlock={ingredientBlock} tempRecipe={tempRecipe} key={ingredientBlock.blockNumber} />
     })
 
     useEffect(() => {
@@ -43,7 +83,7 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe, setToggleFetchRecipes, togg
         let tempRecipeStepListAddition = tempRecipe.recipeStepList
         let block: RecipeStepBlock = {
             for: '',
-            steps: [{recipeStepNumber: 1, recipeStepText: ''}],
+            steps: [{recipeStepNumber: 1, recipeStepText: '', recipeStepType: 'text'}],
             blockNumber: tempRecipe.recipeStepList.length + 1
         }
         tempRecipeStepListAddition.push(block)
@@ -130,7 +170,7 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe, setToggleFetchRecipes, togg
             alert('recipes must have a name and at least one ingredient and step each, edit failed')
         }
     } 
-
+ 
     useEffect(() => {
         if (uploading) {
             setDoc(doc(db, `${user?.email}`, 'recipeCollection', 'recipes', `${tempRecipe.docId}`), tempRecipe).then(() => setToggleFetchRecipes(!toggleFetchRecipes))
@@ -163,17 +203,17 @@ const EditRecipe: React.FC<Props> = ({ editedRecipe, setToggleFetchRecipes, togg
             {tempImagePreview ? <img src={tempImagePreview} style={{height: 150, width: 150}}></img> : null}
             { uploading ? <h3>Uploading, please do not leave the page</h3> : null}
         </Card>
-        <Card sx={{ margin: 5, padding: 5 }}>
-            <Grid container spacing={0}>
-                <Grid item xs={7}>
-                    {listIngredientBlocks}
-                </Grid>
-                <Grid item xs={5}>
-                    {listRecipeStepBlocks}
-                </Grid>    
-            </Grid>
-        </Card>
-        <CurrentRecipe currentRecipe={tempRecipe} />
+        <div className="recipe-container">
+            <div className="ingredient-list">
+                {listIngredientBlocks}
+            </div>
+            <div className="recipe-steps">
+                {listRecipeStepBlocks}
+            </div>
+        </div>
+        <CurrentRecipe currentRecipe={tempRecipe} />        
+        <TextField multiline onChange={(e) => setSplitArrayInput(e.target.value)} value={splitArrayInput} sx={{ width: 1000, height: 500 }}/>
+        <Button onClick={handleRecipeStepSplit} >Split String</Button>
     </>
   )
 }

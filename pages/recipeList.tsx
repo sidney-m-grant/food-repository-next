@@ -16,6 +16,8 @@ import { List, TextField, Card, Button } from '@mui/material'
   export type RecipeStep = {
     recipeStepText: string;
     recipeStepNumber: number;
+    recipeStepType: string;
+    recipeStepImgPath?: string;
   }
 
   export type RecipeStepBlock = {
@@ -51,7 +53,8 @@ import { List, TextField, Card, Button } from '@mui/material'
         for: '',
         steps: [{
             recipeStepNumber: 1,
-            recipeStepText: ''
+            recipeStepText: '',
+            recipeStepType: 'text'
         }],
         blockNumber: 0
     }],

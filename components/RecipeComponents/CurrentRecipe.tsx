@@ -50,19 +50,6 @@ const CurrentRecipe: React.FC<Props> = ({ currentRecipe }) => {
         </Grid>
     </Card>
   )
-   {/* <div className="recipe-container">
-        {currentRecipe.recipeName}
-        {currentRecipe.imgPath ? 
-          <img style={{height: 150, width: 150}} src={currentRecipe.imgPath}></img> : 
-          null
-        }
-        <div className="ingredient-list">
-          {listIngredients}
-        </div>
-        <div className="recipe-steps">
-          {listRecipeSteps}
-        </div>
-      </div> */}
 }
 
 export default CurrentRecipe
