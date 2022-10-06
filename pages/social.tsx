@@ -7,12 +7,8 @@ import FriendRequest from "../components/FriendRequest";
 import SignOutButton from "../components/UIComponents/SignOutButton";
 import Link from "next/link";
 import { Card, TextField, Typography, Button } from "@mui/material";
-import { useState as useStateHookState } from "@hookstate/core";
-import { store } from "../components/store";
 
 const social = () => {
-  const testState = useStateHookState(store);
-
   const router = useRouter();
   const { user } = useAuth();
 
@@ -173,12 +169,6 @@ const social = () => {
         </Link>
         <SignOutButton />
       </Card>
-      <TextField
-        onChange={(e) => {
-          testState.currentRecipe.recipeName.set(e.target.value);
-        }}
-        value={testState.currentRecipe.recipeName.get()}
-      />
     </>
   );
 };

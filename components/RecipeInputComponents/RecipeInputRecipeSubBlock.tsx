@@ -1,7 +1,7 @@
 import { Card, IconButton, TextField, Tooltip, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import type { RecipeStepBlock, Recipe } from "../../pages/recipeList";
-import EditRecipeSub from "./EditRecipeSub";
+import RecipeInputRecipeSub from "./RecipeInputRecipeSub";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { store } from "../store";
@@ -13,7 +13,7 @@ interface Props {
   // tempRecipe: Recipe;
 }
 
-const EditRecipeSubBlock: React.FC<Props> = ({
+const RecipeInputRecipeSubBlock: React.FC<Props> = ({
   // setTempRecipe,
   recipeStepBlock,
   // tempRecipe,
@@ -26,7 +26,7 @@ const EditRecipeSubBlock: React.FC<Props> = ({
 
   const listRecipeSteps = recipeStepBlock.steps.map((recipeStep) => {
     return (
-      <EditRecipeSub
+      <RecipeInputRecipeSub
         //     setTempRecipeStepBlock={setTempRecipeStepBlock}
         recipeStep={recipeStep}
         recipeStepBlock={recipeStepBlock}
@@ -89,18 +89,18 @@ const EditRecipeSubBlock: React.FC<Props> = ({
 
   const handleDeleteLastRecipeStep = () => {
     const length =
-      state.editedRecipe.recipeStepList[recipeStepBlock.blockNumber].steps
+      state.inputRecipe.recipeStepList[recipeStepBlock.blockNumber].steps
         .length;
-    state.editedRecipe.recipeStepList[recipeStepBlock.blockNumber].steps[
+    state.inputRecipe.recipeStepList[recipeStepBlock.blockNumber].steps[
       length - 1
     ].set(none);
   };
 
   const handleAddTempRecipeStep = () => {
     const length =
-      state.editedRecipe.recipeStepList[recipeStepBlock.blockNumber].steps
+      state.inputRecipe.recipeStepList[recipeStepBlock.blockNumber].steps
         .length;
-    state.editedRecipe.recipeStepList[recipeStepBlock.blockNumber].steps[
+    state.inputRecipe.recipeStepList[recipeStepBlock.blockNumber].steps[
       length
     ].set({
       recipeStepNumber: length + 1,
@@ -111,7 +111,7 @@ const EditRecipeSubBlock: React.FC<Props> = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.editedRecipe.recipeStepList[recipeStepBlock.blockNumber].for.set(
+    state.inputRecipe.recipeStepList[recipeStepBlock.blockNumber].for.set(
       e.target.value
     );
   };
@@ -122,7 +122,7 @@ const EditRecipeSubBlock: React.FC<Props> = ({
         size="small"
         helperText="Recipe steps for..."
         onChange={handleChange}
-        value={state.editedRecipe.recipeStepList[
+        value={state.inputRecipe.recipeStepList[
           recipeStepBlock.blockNumber
         ].for.get()}
         placeholder={recipeStepBlock.for}
@@ -142,4 +142,4 @@ const EditRecipeSubBlock: React.FC<Props> = ({
   );
 };
 
-export default EditRecipeSubBlock;
+export default RecipeInputRecipeSubBlock;

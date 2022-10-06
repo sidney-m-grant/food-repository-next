@@ -14,7 +14,7 @@ interface Props {
   recipeStepBlock: RecipeStepBlock;
 }
 
-const EditRecipeSub: React.FC<Props> = ({
+const RecipeInputRecipeSub: React.FC<Props> = ({
   // setTempRecipeStepBlock,
   recipeStep,
   recipeStepBlock,
@@ -44,7 +44,7 @@ const EditRecipeSub: React.FC<Props> = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.editedRecipe.recipeStepList[recipeStepBlock.blockNumber].steps[
+    state.inputRecipe.recipeStepList[recipeStepBlock.blockNumber].steps[
       recipeStep.recipeStepNumber - 1
     ].recipeStepText.set(e.target.value);
   };
@@ -57,7 +57,7 @@ const EditRecipeSub: React.FC<Props> = ({
         <TextField
           sx={{ width: 490 }}
           onChange={handleChange}
-          value={state.editedRecipe.recipeStepList[
+          value={state.inputRecipe.recipeStepList[
             recipeStepBlock.blockNumber
           ].steps[recipeStep.recipeStepNumber - 1].recipeStepText.get()}
           multiline
@@ -68,4 +68,4 @@ const EditRecipeSub: React.FC<Props> = ({
   );
 };
 
-export default EditRecipeSub;
+export default RecipeInputRecipeSub;

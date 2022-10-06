@@ -10,7 +10,7 @@ interface Props {
   ingredientBlock: IngredientBlock;
 }
 
-const EditIngredientSub: React.FC<Props> = ({
+const RecipeInputIngredientSub: React.FC<Props> = ({
   setTempIngredientBlock,
   ingredient,
   ingredientBlock,
@@ -44,7 +44,7 @@ const EditIngredientSub: React.FC<Props> = ({
   const handleChangeAmount = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.editedRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
+    state.inputRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
       ingredient.ingredientId - 1
     ].ingredientAmount.set(e.target.value);
   };
@@ -52,7 +52,7 @@ const EditIngredientSub: React.FC<Props> = ({
   const handleChangeName = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.editedRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
+    state.inputRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
       ingredient.ingredientId - 1
     ].ingredientName.set(e.target.value);
   };
@@ -60,7 +60,7 @@ const EditIngredientSub: React.FC<Props> = ({
   const handleChangeUnit = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.editedRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
+    state.inputRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
       ingredient.ingredientId - 1
     ].ingredientUnit.set(e.target.value);
   };
@@ -70,7 +70,7 @@ const EditIngredientSub: React.FC<Props> = ({
       <TextField
         helperText="amount"
         onChange={handleChangeAmount}
-        value={state.editedRecipe.ingredientList[
+        value={state.inputRecipe.ingredientList[
           ingredientBlock.blockNumber
         ].ingredients[ingredient.ingredientId - 1].ingredientAmount.get()}
         placeholder={ingredient.ingredientAmount}
@@ -78,7 +78,7 @@ const EditIngredientSub: React.FC<Props> = ({
       <TextField
         helperText="unit"
         onChange={handleChangeUnit}
-        value={state.editedRecipe.ingredientList[
+        value={state.inputRecipe.ingredientList[
           ingredientBlock.blockNumber
         ].ingredients[ingredient.ingredientId - 1].ingredientUnit.get()}
         placeholder={ingredient.ingredientUnit}
@@ -86,7 +86,7 @@ const EditIngredientSub: React.FC<Props> = ({
       <TextField
         helperText="name"
         onChange={handleChangeName}
-        value={state.editedRecipe.ingredientList[
+        value={state.inputRecipe.ingredientList[
           ingredientBlock.blockNumber
         ].ingredients[ingredient.ingredientId - 1].ingredientName.get()}
         placeholder={ingredient.ingredientName}
@@ -95,4 +95,4 @@ const EditIngredientSub: React.FC<Props> = ({
   );
 };
 
-export default EditIngredientSub;
+export default RecipeInputIngredientSub;

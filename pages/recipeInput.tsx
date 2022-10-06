@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SignOutButton from "../components/UIComponents/SignOutButton";
 import Link from "next/link";
-import RecipeInputComp from "../components/EditInputComponents/RecipeInputComp";
+import RecipeInputComp from "../components/RecipeInputComponents/RecipeInputComp";
 import { dummyRecipe, Recipe } from "../pages/recipeList";
 import { Card, Button, TextField } from "@mui/material";
 
@@ -54,7 +54,6 @@ const RecipeInput = () => {
             blockNumber: 0,
             steps: [
               {
-                recipeStepType: "text",
                 recipeStepNumber: 1,
                 recipeStepText: "",
               },
@@ -68,7 +67,6 @@ const RecipeInput = () => {
             blockNumber: counter,
             steps: [
               {
-                recipeStepType: "text",
                 recipeStepNumber: 1,
                 recipeStepText: "",
               },
@@ -81,7 +79,6 @@ const RecipeInput = () => {
           tempRecipeStepSplitList[counter].steps[0] = {
             recipeStepNumber: 1,
             recipeStepText: tempArray[i],
-            recipeStepType: "text",
           };
           firstStep = false;
         } else {
@@ -89,7 +86,6 @@ const RecipeInput = () => {
             tempRecipeStepSplitList[counter].steps.length
           ] = {
             recipeStepNumber: tempRecipeStepSplitList[counter].steps.length + 1,
-            recipeStepType: "text",
             recipeStepText: tempArray[i],
           };
         }
@@ -211,9 +207,7 @@ const RecipeInput = () => {
         {
           for: "",
           blockNumber: 0,
-          steps: [
-            { recipeStepNumber: 1, recipeStepText: "", recipeStepType: "text" },
-          ],
+          steps: [{ recipeStepNumber: 1, recipeStepText: "" }],
         },
       ],
       ingredientList: tempIngredientSplitList,

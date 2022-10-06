@@ -1,7 +1,7 @@
 import { Card, TextField, Tooltip, IconButton, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import type { IngredientBlock, Recipe } from "../../pages/recipeList";
-import EditIngredientSub from "./EditIngredientSub";
+import RecipeInputIngredientSub from "./RecipeInputIngredientSub";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { useState as useStateHookstate, none } from "@hookstate/core";
@@ -11,7 +11,9 @@ interface Props {
   ingredientBlock: IngredientBlock;
 }
 
-const EditIngredientSubBlock: React.FC<Props> = ({ ingredientBlock }) => {
+const RecipeInputIngredientSubBlock: React.FC<Props> = ({
+  ingredientBlock,
+}) => {
   const [forStatement, setForStatement] = useState<string>(ingredientBlock.for);
   const [tempIngredientBlock, setTempIngredientBlock] =
     useState<IngredientBlock>(ingredientBlock);
@@ -20,7 +22,7 @@ const EditIngredientSubBlock: React.FC<Props> = ({ ingredientBlock }) => {
 
   const listIngredients = ingredientBlock.ingredients.map((ingredient) => {
     return (
-      <EditIngredientSub
+      <RecipeInputIngredientSub
         setTempIngredientBlock={setTempIngredientBlock}
         ingredient={ingredient}
         ingredientBlock={ingredientBlock}
@@ -75,9 +77,9 @@ const EditIngredientSubBlock: React.FC<Props> = ({ ingredientBlock }) => {
 
   const handleAddTempIngredient = () => {
     const length =
-      state.editedRecipe.ingredientList[ingredientBlock.blockNumber].ingredients
+      state.inputRecipe.ingredientList[ingredientBlock.blockNumber].ingredients
         .length;
-    state.editedRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
+    state.inputRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
       length
     ].set({
       ingredientAmount: "",
@@ -89,9 +91,9 @@ const EditIngredientSubBlock: React.FC<Props> = ({ ingredientBlock }) => {
 
   const handleDeleteLastIngredient = () => {
     const length =
-      state.editedRecipe.ingredientList[ingredientBlock.blockNumber].ingredients
+      state.inputRecipe.ingredientList[ingredientBlock.blockNumber].ingredients
         .length;
-    state.editedRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
+    state.inputRecipe.ingredientList[ingredientBlock.blockNumber].ingredients[
       length - 1
     ].set(none);
   };
@@ -110,7 +112,7 @@ const EditIngredientSubBlock: React.FC<Props> = ({ ingredientBlock }) => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.editedRecipe.ingredientList[ingredientBlock.blockNumber].for.set(
+    state.inputRecipe.ingredientList[ingredientBlock.blockNumber].for.set(
       e.target.value
     );
   };
@@ -120,7 +122,7 @@ const EditIngredientSubBlock: React.FC<Props> = ({ ingredientBlock }) => {
         size="small"
         helperText="Ingredient block for..."
         onChange={handleChange}
-        value={state.editedRecipe.ingredientList[
+        value={state.inputRecipe.ingredientList[
           ingredientBlock.blockNumber
         ].for.get()}
         placeholder={ingredientBlock.for}
@@ -140,4 +142,4 @@ const EditIngredientSubBlock: React.FC<Props> = ({ ingredientBlock }) => {
   );
 };
 
-export default EditIngredientSubBlock;
+export default RecipeInputIngredientSubBlock;
