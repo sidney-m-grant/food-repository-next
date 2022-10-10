@@ -19,7 +19,7 @@ import EditRecipe from "../components/EditInputComponents/EditRecipe";
 import { deleteObject, ref } from "firebase/storage";
 import { List, TextField, Card, Button } from "@mui/material";
 import { useState as useStateHookstate } from "@hookstate/core";
-import { store } from "../components/store";
+import { store, dummyRecipe } from "../components/store";
 
 export type RecipeStep = {
   recipeStepText: string;
@@ -51,36 +51,12 @@ export type Recipe = {
   recipeStepList: RecipeStepBlock[];
   ingredientList: IngredientBlock[];
   imgPath?: string;
-};
-
-export const dummyRecipe: Recipe = {
-  recipeName: "",
-  recipeStepList: [
-    {
-      for: "",
-      steps: [
-        {
-          recipeStepNumber: 1,
-          recipeStepText: "",
-        },
-      ],
-      blockNumber: 0,
-    },
-  ],
-  ingredientList: [
-    {
-      for: "",
-      ingredients: [
-        {
-          ingredientAmount: "",
-          ingredientId: 1,
-          ingredientName: "",
-          ingredientUnit: "",
-        },
-      ],
-      blockNumber: 0,
-    },
-  ],
+  prepTime?: string;
+  activeCookingTime?: string;
+  totalTime?: string;
+  servesAmount?: string;
+  source?: string;
+  briefDescription?: string;
 };
 
 export const RecipeList = () => {
@@ -93,8 +69,6 @@ export const RecipeList = () => {
   const [listOfFriends, setListOfFriends] = useState<string[]>([user?.email]);
   const [selectedOption, setSelectedOption] = useState<string>(user.email);
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
-  const [currentRecipe, setCurrentRecipe] = useState<Recipe>(dummyRecipe);
-  const [editedRecipe, setEditedRecipe] = useState<Recipe>(dummyRecipe);
   const [searchInput, setSearchInput] = useState<string>("");
   const [recipeToDelete, setRecipeToDelete] = useState<Recipe>(dummyRecipe);
   const [toggleRecipeBox, setToggleRecipeBox] = useState<
@@ -135,13 +109,18 @@ export const RecipeList = () => {
           ingredientList: recipe.ingredientList,
           docId: recipe.docId,
           imgPath: recipe.imgPath,
+          prepTime: recipe.prepTime,
+          activeCookingTime: recipe.activeCookingTime,
+          totalTime: recipe.totalTime,
+          servesAmount: recipe.servesAmount,
+          source: recipe.source,
+          briefDescription: recipe.briefDescription,
         };
         recipeArray.push(temp);
       });
       setAllRecipes(recipeArray);
     };
     getRecipes();
-    setCurrentRecipe(dummyRecipe);
   }, [selectedOption, toggleFetchRecipes]);
 
   const deleteRecipe = async (docId: string) => {
@@ -185,12 +164,7 @@ export const RecipeList = () => {
       <IndividualRecipe
         recipe={recipe}
         key={allRecipes.indexOf(recipe)}
-        setCurrentRecipe={setCurrentRecipe}
-        setEditedRecipe={setEditedRecipe}
-        dummyRecipe={dummyRecipe}
         setRecipeToDelete={setRecipeToDelete}
-        currentRecipe={currentRecipe}
-        editedRecipe={editedRecipe}
         toggleRecipeBox={toggleRecipeBox}
         setToggleRecipeBox={setToggleRecipeBox}
       />
@@ -208,6 +182,10 @@ export const RecipeList = () => {
     );
   });
 
+  const handleTest = () => {
+    console.log(state.editedRecipe.get());
+  };
+
   return (
     <>
       <Card style={{ width: 217, margin: 10, padding: 10 }}>
@@ -220,9 +198,9 @@ export const RecipeList = () => {
         {state.currentRecipe.recipeName.get() ? (
           <CurrentRecipe currentRecipe={state.currentRecipe.get()} />
         ) : null}
-        {state.editedRecipe.recipeName.get() ? (
+        {state.editedRecipe.recipeName.get() &&
+        !state.currentRecipe.recipeName.get() ? (
           <EditRecipe
-            editedRecipe={state.editedRecipe.get()}
             setToggleFetchRecipes={setToggleFetchRecipes}
             toggleFetchRecipes={toggleFetchRecipes}
           />
@@ -241,6 +219,7 @@ export const RecipeList = () => {
         </Link>
         <SignOutButton />
       </Card>
+      <button onClick={handleTest}>test</button>
     </>
   );
 };

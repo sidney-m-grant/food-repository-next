@@ -4,6 +4,7 @@ import type {
   Recipe,
   RecipeStep,
 } from "../../pages/recipeList";
+import { Card } from "@mui/material";
 
 interface Props {
   stepBlock: RecipeStepBlock;
@@ -24,8 +25,12 @@ const RecipeStepBlockComp: React.FC<Props> = ({
 
   return (
     <div>
-      {`${stepBlock.for}`}
-      {listRecipeSteps}
+      {stepBlock.for ? (
+        <Card sx={{ margin: 0.5, padding: 0.5, display: "inline-block" }}>
+          <b>{`${stepBlock.for}`}</b>
+        </Card>
+      ) : null}
+      <Card sx={{ margin: 2, padding: 2 }}>{listRecipeSteps}</Card>
     </div>
   );
 };

@@ -1,6 +1,6 @@
-import { Card, IconButton, TextField, Tooltip, Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import type { RecipeStepBlock, Recipe } from "../../pages/recipeList";
+import { Card, IconButton, TextField, Tooltip } from "@mui/material";
+import React from "react";
+import type { RecipeStepBlock } from "../../pages/recipeList";
 import RecipeInputRecipeSub from "./RecipeInputRecipeSub";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -8,84 +8,21 @@ import { store } from "../store";
 import { useState as useStateHookstate, none } from "@hookstate/core";
 
 interface Props {
-  // setTempRecipe: React.Dispatch<React.SetStateAction<Recipe>>;
   recipeStepBlock: RecipeStepBlock;
-  // tempRecipe: Recipe;
 }
 
-const RecipeInputRecipeSubBlock: React.FC<Props> = ({
-  // setTempRecipe,
-  recipeStepBlock,
-  // tempRecipe,
-}) => {
-  const [forStatement, setForStatement] = useState<string>(recipeStepBlock.for);
-  const [tempRecipeStepBlock, setTempRecipeStepBlock] =
-    useState<RecipeStepBlock>(recipeStepBlock);
-
+const RecipeInputRecipeSubBlock: React.FC<Props> = ({ recipeStepBlock }) => {
   const state = useStateHookstate(store);
 
   const listRecipeSteps = recipeStepBlock.steps.map((recipeStep) => {
     return (
       <RecipeInputRecipeSub
-        //     setTempRecipeStepBlock={setTempRecipeStepBlock}
         recipeStep={recipeStep}
         recipeStepBlock={recipeStepBlock}
         key={recipeStep.recipeStepNumber}
       />
     );
   });
-  /*
-  useEffect(() => {
-    let tempRecipeStepList = tempRecipe.recipeStepList;
-    tempRecipeStepList[recipeStepBlock.blockNumber] = tempRecipeStepBlock;
-    tempRecipeStepList[recipeStepBlock.blockNumber].for = forStatement;
-    setTempRecipe((prev: Recipe) => {
-      return {
-        ...prev,
-        recipeStepList: tempRecipeStepList,
-      };
-    });
-  }, [tempRecipeStepBlock]);
-
-  useEffect(() => {
-    setTempRecipeStepBlock((prev) => {
-      return {
-        ...prev,
-        for: forStatement,
-      };
-    });
-  }, [forStatement]);
-
-  useEffect(() => {
-    setForStatement(recipeStepBlock.for);
-  }, [recipeStepBlock]);
-
-  const handleAddTempRecipeStep = () => {
-    let tempRecipeAddition = tempRecipeStepBlock;
-    tempRecipeAddition.steps.push({
-      recipeStepNumber: tempRecipeAddition.steps.length + 1,
-      recipeStepText: "",
-      recipeStepType: "text",
-    });
-    setTempRecipeStepBlock((prev) => {
-      return {
-        ...prev,
-        steps: tempRecipeAddition.steps,
-      };
-    });
-  };
-
-  const handleDeleteLastRecipeStep = () => {
-    let tempRecipeSubtraction = tempRecipeStepBlock;
-    tempRecipeSubtraction.steps.pop();
-    setTempRecipeStepBlock((prev) => {
-      return {
-        ...prev,
-        steps: tempRecipeSubtraction.steps,
-      };
-    });
-  };
-*/
 
   const handleDeleteLastRecipeStep = () => {
     const length =

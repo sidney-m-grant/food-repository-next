@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import type { Recipe, IngredientBlock } from "../../pages/recipeList";
 import CurrentRecipe from "../RecipeComponents/CurrentRecipe";
 import { setDoc, doc } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
@@ -17,110 +16,22 @@ import Compressor from "compressorjs";
 import { ButtonGroup, Card, Button } from "@mui/material";
 import { useState as useStateHookstate, none } from "@hookstate/core";
 import { store } from "../store";
-import { useRouter } from "next/router";
 
 interface Props {
-  editedRecipe: Recipe;
   toggleFetchRecipes: boolean;
   setToggleFetchRecipes: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const unitList = [
-  "teaspoons",
-  "tablespoons",
-  "tbsp",
-  "tablespoon",
-  "cup",
-  "gram",
-  "kilogram",
-  "teaspoon",
-  "tsp",
-  "liter",
-  "lb",
-  "pound",
-  "container",
-  "gallon",
-  "quart",
-  "pint",
-  "fl oz",
-  "oz",
-  "ounces",
-  "handful",
-  "dash",
-  "milliters",
-];
-const unitRegex = new RegExp("\\b(" + unitList.join("|") + ")\\b", "g");
-
 const EditRecipe: React.FC<Props> = ({
-  editedRecipe,
   setToggleFetchRecipes,
   toggleFetchRecipes,
 }) => {
   const { user } = useAuth();
   const state = useStateHookstate(store);
-  const router = useRouter();
 
-  const [tempRecipe, setTempRecipe] = useState<Recipe>(editedRecipe);
   const [tempImageFile, setTempImageFile] = useState<File | null>(null);
   const [tempImagePreview, setTempImagePreview] = useState("");
   const [uploading, setUploading] = useState<boolean>(false);
-  {
-    /*
-  const [splitArrayInput, setSplitArrayInput] = useState("");
-  const [splitArray, setSplitArray] = useState<string[]>([]);
-  const [splitIngredientArray, setSplitIngredientArray] = useState<
-    IngredientSplit[]
-  >([]);
-
-  const handleRecipeStepSplit = () => {
-    const tempArray = splitArrayInput.split(/\n/);
-    setSplitArray(tempArray);
-  };
-  const handleIngredientSplit = () => {
-    const tempArray = splitArrayInput.split(/\n/);
-    const tempAmountArray = [];
-    const tempUnitArray: any = [];
-    const tempNameArray = [];
-    const tempObjectArray = [];
-    
-    for (var i = 0; i < tempArray.length; i++) {
-      var match: any = tempArray[i].match(/[A-Za-z]/);
-      var index = tempArray[i].indexOf(match[0]);
-      tempAmountArray[i] = tempArray[i].substring(0, index).trim();
-      if (tempArray[i].match(unitRegex)) {
-        const temp: any = tempArray[i].match(unitRegex);
-        tempUnitArray[i] = temp[0];
-        index = index + tempUnitArray[i].length;
-      } else {
-        tempUnitArray[i] = "";
-      }
-      tempNameArray[i] = tempArray[i]
-        .substring(index, tempArray[i].length)
-        .trim();
-      index = index + tempArray[i].length;
-      tempObjectArray[i] = {
-        amount: tempAmountArray[i],
-        unit: tempUnitArray[i],
-        name: tempNameArray[i],
-      };
-    }
-    setSplitIngredientArray(tempObjectArray);
-  }; */
-  }
-  /*
-  const listRecipeStepBlocks = tempRecipe.recipeStepList.map(
-    (recipeStepBlock) => {
-      return (
-        <EditRecipeSubBlock
-          //    setTempRecipe={setTempRecipe}
-          recipeStepBlock={recipeStepBlock}
-          //     tempRecipe={tempRecipe}
-          key={recipeStepBlock.blockNumber}
-        />
-      );
-    }
-  );
-*/
 
   const listRecipeStepBlocks = state.editedRecipe.recipeStepList
     .get()
@@ -133,21 +44,6 @@ const EditRecipe: React.FC<Props> = ({
       );
     });
 
-  /*
-  const listIngredientBlocks = tempRecipe.ingredientList.map(
-    (ingredientBlock) => {
-      return (
-        <EditIngredientSubBlock
-          //   setTempRecipe={setTempRecipe}
-          ingredientBlock={ingredientBlock}
-          //    tempRecipe={tempRecipe}
-          key={ingredientBlock.blockNumber}
-        />
-      );
-    }
-  );
-*/
-
   const listIngredientBlocks = state.editedRecipe.ingredientList
     .get()
     .map((ingredientBlock) => {
@@ -159,26 +55,6 @@ const EditRecipe: React.FC<Props> = ({
       );
     });
 
-  useEffect(() => {
-    setTempRecipe(editedRecipe);
-  }, [editedRecipe]);
-  /*
-  const addNewRecipeStepBlock = () => {
-    let tempRecipeStepListAddition = tempRecipe.recipeStepList;
-    let block: RecipeStepBlock = {
-      for: "",
-      steps: [{ recipeStepNumber: 1, recipeStepText: "" }],
-      blockNumber: tempRecipe.recipeStepList.length + 1,
-    };
-    tempRecipeStepListAddition.push(block);
-    setTempRecipe((prev) => {
-      return {
-        ...prev,
-        recipeStepList: tempRecipeStepListAddition,
-      };
-    });
-  };
-*/
   const addNewRecipeStepBlock = () => {
     const length = state.editedRecipe.recipeStepList.length;
     state.editedRecipe.recipeStepList[length].set({
@@ -192,30 +68,6 @@ const EditRecipe: React.FC<Props> = ({
       ],
     });
   };
-  /*
-  const addNewIngredientBlock = () => {
-    let tempIngredientListAddition = tempRecipe.ingredientList;
-    let block: IngredientBlock = {
-      for: "",
-      ingredients: [
-        {
-          ingredientName: "",
-          ingredientAmount: "",
-          ingredientId: 1,
-          ingredientUnit: "",
-        },
-      ],
-      blockNumber: tempRecipe.ingredientList.length + 1,
-    };
-    tempIngredientListAddition.push(block);
-    setTempRecipe((prev) => {
-      return {
-        ...prev,
-        ingredientList: tempIngredientListAddition,
-      };
-    });
-  };
-*/
 
   const addNewIngredientBlock = () => {
     const length = state.editedRecipe.ingredientList.length;
@@ -233,29 +85,6 @@ const EditRecipe: React.FC<Props> = ({
     });
   };
 
-  /*
-  const deleteLastRecipeStepBlock = () => {
-    let tempRecipeStepListSubtraction = tempRecipe.recipeStepList;
-    tempRecipeStepListSubtraction.pop();
-    setTempRecipe((prev) => {
-      return {
-        ...prev,
-        recipeStepList: tempRecipeStepListSubtraction,
-      };
-    });
-  };
-
-  const deleteLastIngredientBlock = () => {
-    let tempIngredientListSubtraction = tempRecipe.ingredientList;
-    tempIngredientListSubtraction.pop();
-    setTempRecipe((prev) => {
-      return {
-        ...prev,
-        ingredientList: tempIngredientListSubtraction,
-      };
-    });
-  };
-*/
   const deleteLastRecipeStepBlock = () => {
     const length = state.editedRecipe.recipeStepList.length;
     state.editedRecipe.recipeStepList[length - 1].set(none);
@@ -266,21 +95,21 @@ const EditRecipe: React.FC<Props> = ({
     state.editedRecipe.ingredientList[length - 1].set(none);
   };
 
-  const deleteImage = async (imgPath: string) => {
+  const deleteImage = async (imgPath: string | undefined) => {
     const deleteRef = ref(storage, imgPath);
     await deleteObject(deleteRef);
   };
 
   const uploadFinishedRecipe = async () => {
     if (
-      tempRecipe.recipeName &&
-      tempRecipe.ingredientList.length > 0 &&
-      tempRecipe.recipeStepList.length > 0
+      state.editedRecipe.recipeName.get() &&
+      state.editedRecipe.ingredientList.get().length > 0 &&
+      state.editedRecipe.recipeStepList.get().length > 0
     ) {
       setUploading(true);
       if (tempImageFile) {
-        if (editedRecipe.imgPath) {
-          deleteImage(editedRecipe.imgPath);
+        if (state.editedRecipe.imgPath.get()) {
+          deleteImage(state.editedRecipe.imgPath.get());
         }
         const imageRef = ref(
           storage,
@@ -291,14 +120,7 @@ const EditRecipe: React.FC<Props> = ({
           success(result) {
             uploadBytes(imageRef, result)
               .then((snapshot) => getDownloadURL(snapshot.ref))
-              .then((url) =>
-                setTempRecipe((prev) => {
-                  return {
-                    ...prev,
-                    imgPath: url,
-                  };
-                })
-              );
+              .then((url) => state.editedRecipe.imgPath.set(url));
           },
         });
       } else {
@@ -308,9 +130,9 @@ const EditRecipe: React.FC<Props> = ({
             `${user?.email}`,
             "recipeCollection",
             "recipes",
-            `${tempRecipe.docId}`
+            `${state.editedRecipe.docId.get()}`
           ),
-          tempRecipe
+          state.editedRecipe.get()
         ).then(() => setUploading(false));
       }
     } else {
@@ -328,13 +150,13 @@ const EditRecipe: React.FC<Props> = ({
           `${user?.email}`,
           "recipeCollection",
           "recipes",
-          `${tempRecipe.docId}`
+          `${state.editedRecipe.docId.get()}`
         ),
-        tempRecipe
+        state.editedRecipe.get()
       ).then(() => setToggleFetchRecipes(!toggleFetchRecipes));
       setUploading(false);
     }
-  }, [tempRecipe.imgPath]);
+  }, [state.editedRecipe.imgPath.get()]);
 
   const handleImgPreview = (e: any) => {
     if (e.target.files[0]) {
@@ -376,7 +198,7 @@ const EditRecipe: React.FC<Props> = ({
         <div className="ingredient-list">{listIngredientBlocks}</div>
         <div className="recipe-steps">{listRecipeStepBlocks}</div>
       </div>
-      <CurrentRecipe currentRecipe={tempRecipe} />
+      <CurrentRecipe currentRecipe={state.editedRecipe.get()} />
     </>
   );
 };

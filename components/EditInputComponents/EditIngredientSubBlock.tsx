@@ -1,6 +1,6 @@
 import { Card, TextField, Tooltip, IconButton, Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import type { IngredientBlock, Recipe } from "../../pages/recipeList";
+import React from "react";
+import type { IngredientBlock } from "../../pages/recipeList";
 import EditIngredientSub from "./EditIngredientSub";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -12,66 +12,17 @@ interface Props {
 }
 
 const EditIngredientSubBlock: React.FC<Props> = ({ ingredientBlock }) => {
-  const [forStatement, setForStatement] = useState<string>(ingredientBlock.for);
-  const [tempIngredientBlock, setTempIngredientBlock] =
-    useState<IngredientBlock>(ingredientBlock);
-
   const state = useStateHookstate(store);
 
   const listIngredients = ingredientBlock.ingredients.map((ingredient) => {
     return (
       <EditIngredientSub
-        setTempIngredientBlock={setTempIngredientBlock}
         ingredient={ingredient}
         ingredientBlock={ingredientBlock}
         key={ingredient.ingredientId}
       />
     );
   });
-  /*
-  useEffect(() => {
-    let tempIngredientList = tempRecipe.ingredientList;
-    tempIngredientList[ingredientBlock.blockNumber] = tempIngredientBlock;
-    tempIngredientList[ingredientBlock.blockNumber].for = forStatement;
-    setTempRecipe((prev: Recipe) => {
-      return {
-        ...prev,
-        ingredientList: tempIngredientList,
-      };
-    });
-  }, [tempIngredientBlock]);
-
-  useEffect(() => {
-    setTempIngredientBlock((prev) => {
-      return {
-        ...prev,
-        for: forStatement,
-      };
-    });
-  }, [forStatement]);
-
-  useEffect(() => {
-    setForStatement(ingredientBlock.for);
-  }, [ingredientBlock]);
-*/
-
-  /*
-  const handleAddTempIngredient = () => {
-    let tempIngredientAddition = tempIngredientBlock;
-    tempIngredientAddition.ingredients.push({
-      ingredientId: tempIngredientBlock.ingredients.length + 1,
-      ingredientAmount: "",
-      ingredientName: "",
-      ingredientUnit: "",
-    });
-    setTempIngredientBlock((prev) => {
-      return {
-        ...prev,
-        ingredients: tempIngredientAddition.ingredients,
-      };
-    });
-  };
-*/
 
   const handleAddTempIngredient = () => {
     const length =
@@ -95,18 +46,7 @@ const EditIngredientSubBlock: React.FC<Props> = ({ ingredientBlock }) => {
       length - 1
     ].set(none);
   };
-  /*
-  const handleDeleteLastIngredient = () => {
-    let tempIngredientSubtraction = tempIngredientBlock;
-    tempIngredientSubtraction.ingredients.pop();
-    setTempRecipe((prev: Recipe) => {
-      return {
-        ...prev,
-        ingredients: tempIngredientSubtraction.ingredients,
-      };
-    });
-  };
-*/
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {

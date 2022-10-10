@@ -1,8 +1,14 @@
 import { createState } from "@hookstate/core";
 import type { Recipe } from "../pages/recipeList";
 
-const dummyRecipe: Recipe = {
+export const dummyRecipe: Recipe = {
   recipeName: "",
+  prepTime: "",
+  activeCookingTime: "",
+  totalTime: "",
+  servesAmount: "",
+  source: "",
+  briefDescription: "",
   recipeStepList: [
     {
       for: "",

@@ -1,19 +1,13 @@
 import React from "react";
 import type { Recipe } from "../../pages/recipeList";
-import CurrentRecipe from "./CurrentRecipe";
 import RecipeButtonBox from "../UIComponents/RecipeButtonBox";
 import { ListItem } from "@mui/material";
-import { store } from "../store";
+import { store, dummyRecipe } from "../store";
 import { useState as useStateHookstate } from "@hookstate/core";
 
 interface Props {
   recipe: Recipe;
-  setCurrentRecipe: React.Dispatch<React.SetStateAction<Recipe>>;
-  setEditedRecipe: React.Dispatch<React.SetStateAction<Recipe>>;
-  dummyRecipe: Recipe;
   setRecipeToDelete: React.Dispatch<React.SetStateAction<Recipe>>;
-  currentRecipe: Recipe;
-  editedRecipe: Recipe;
   toggleRecipeBox: string | null | undefined;
   setToggleRecipeBox: React.Dispatch<
     React.SetStateAction<string | null | undefined>
@@ -22,12 +16,7 @@ interface Props {
 
 const IndividualRecipe: React.FC<Props> = ({
   recipe,
-  setCurrentRecipe,
-  setEditedRecipe,
-  dummyRecipe,
   setRecipeToDelete,
-  currentRecipe,
-  editedRecipe,
   toggleRecipeBox,
   setToggleRecipeBox,
 }) => {
@@ -44,11 +33,11 @@ const IndividualRecipe: React.FC<Props> = ({
   };
 
   const handleDeleteRecipeClick = async () => {
-    if (currentRecipe === recipe) {
-      setCurrentRecipe(dummyRecipe);
+    if (state.currentRecipe.get() === recipe) {
+      state.currentRecipe.set(dummyRecipe);
     }
-    if (editedRecipe === recipe) {
-      setEditedRecipe(dummyRecipe);
+    if (state.editedRecipe.get() === recipe) {
+      state.editedRecipe.set(dummyRecipe);
     }
     setRecipeToDelete(recipe);
   };
