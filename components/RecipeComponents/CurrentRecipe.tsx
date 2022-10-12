@@ -1,9 +1,5 @@
 import React from "react";
-import type {
-  Recipe,
-  RecipeStepBlock,
-  IngredientBlock,
-} from "../../pages/recipeList";
+import type { Recipe, RecipeStepBlock, IngredientBlock } from "../store";
 import RecipeStepBlockComp from "./RecipeStepBlockComp";
 import IngredientBlockComp from "./IngredientBlockComp";
 import { Card, Grid, Typography, CardMedia } from "@mui/material";

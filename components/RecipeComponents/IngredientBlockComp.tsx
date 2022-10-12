@@ -1,10 +1,6 @@
 import { Card, Typography } from "@mui/material";
 import React from "react";
-import type {
-  Ingredient,
-  IngredientBlock,
-  Recipe,
-} from "../../pages/recipeList";
+import type { Ingredient, IngredientBlock, Recipe } from "../store";
 
 interface Props {
   ingBlock: IngredientBlock;

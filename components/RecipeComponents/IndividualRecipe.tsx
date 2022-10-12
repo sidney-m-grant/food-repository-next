@@ -1,25 +1,18 @@
 import React from "react";
-import type { Recipe } from "../../pages/recipeList";
-import RecipeButtonBox from "../UIComponents/RecipeButtonBox";
-import { ListItem } from "@mui/material";
+import type { Recipe } from "../store";
+import { IconButton, ListItem } from "@mui/material";
 import { store, dummyRecipe } from "../store";
 import { useState as useStateHookstate } from "@hookstate/core";
+import EditIcon from "@mui/icons-material/Edit";
+import SelectAllIcon from "@mui/icons-material/SelectAll";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 interface Props {
   recipe: Recipe;
   setRecipeToDelete: React.Dispatch<React.SetStateAction<Recipe>>;
-  toggleRecipeBox: string | null | undefined;
-  setToggleRecipeBox: React.Dispatch<
-    React.SetStateAction<string | null | undefined>
-  >;
 }
 
-const IndividualRecipe: React.FC<Props> = ({
-  recipe,
-  setRecipeToDelete,
-  toggleRecipeBox,
-  setToggleRecipeBox,
-}) => {
+const IndividualRecipe: React.FC<Props> = ({ recipe, setRecipeToDelete }) => {
   const state = useStateHookstate(store);
 
   const handleCurrentRecipeClick = () => {
@@ -44,14 +37,15 @@ const IndividualRecipe: React.FC<Props> = ({
 
   return (
     <ListItem>
-      <RecipeButtonBox
-        handleCurrentRecipeClick={handleCurrentRecipeClick}
-        handleEditedRecipeClick={handleEditedRecipeClick}
-        handleDeleteRecipeClick={handleDeleteRecipeClick}
-        recipe={recipe}
-        toggleRecipeBox={toggleRecipeBox}
-        setToggleRecipeBox={setToggleRecipeBox}
-      />
+      <IconButton onClick={handleCurrentRecipeClick}>
+        <SelectAllIcon></SelectAllIcon>
+      </IconButton>
+      <IconButton onClick={handleEditedRecipeClick}>
+        <EditIcon></EditIcon>
+      </IconButton>
+      <IconButton onClick={handleDeleteRecipeClick}>
+        <RemoveCircleIcon></RemoveCircleIcon>
+      </IconButton>
       <h5
         onClick={handleCurrentRecipeClick}
         style={{ display: "inline-block", margin: 10 }}

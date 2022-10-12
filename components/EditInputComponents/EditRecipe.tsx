@@ -13,9 +13,10 @@ import EditRecipeSubBlock from "./EditRecipeSubBlock";
 import EditIngredientSubBlock from "./EditIngredientSubBlock";
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
-import { ButtonGroup, Card, Button } from "@mui/material";
+import { ButtonGroup, Card, Button, TextField } from "@mui/material";
 import { useState as useStateHookstate, none } from "@hookstate/core";
 import { store } from "../store";
+import EditButtonGroup from "../UIComponents/EditButtonGroup";
 
 interface Props {
   toggleFetchRecipes: boolean;
@@ -168,29 +169,95 @@ const EditRecipe: React.FC<Props> = ({
     }
   };
 
+  const handlePrepTimeChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    state.editedRecipe.prepTime.set(e.target.value);
+  };
+
+  const handleServesAmountChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    state.editedRecipe.servesAmount.set(e.target.value);
+  };
+
+  const handleActiveCookingTimeChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    state.editedRecipe.activeCookingTime.set(e.target.value);
+  };
+
+  const handleTotalTimeChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    state.editedRecipe.totalTime.set(e.target.value);
+  };
+
+  const handleSourceChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    state.editedRecipe.source.set(e.target.value);
+  };
+
+  const handleBriefDescriptionChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    state.editedRecipe.briefDescription.set(e.target.value);
+  };
+
   return (
     <>
       <Card>
-        {state.editedRecipe.recipeName.get()}
-        <ButtonGroup>
-          <Button style={{ fontSize: 12 }} onClick={addNewRecipeStepBlock}>
-            Add New Recipe Step Block
-          </Button>
-          <Button onClick={deleteLastRecipeStepBlock}>
-            Delete Last Recipe Step Block
-          </Button>
-          <Button onClick={addNewIngredientBlock}>
-            Add New Ingredient Block
-          </Button>
-          <Button onClick={deleteLastIngredientBlock}>
-            Delete Last Ingredient Block
-          </Button>
-        </ButtonGroup>{" "}
-        <br />
+        <Card sx={{ padding: 1, margin: 1, display: "inline-flex" }}>
+          {state.editedRecipe.recipeName.get()}
+        </Card>
+        <TextField
+          helperText="Serves Amount"
+          value={state.editedRecipe.servesAmount.get()}
+          onChange={handleServesAmountChange}
+        ></TextField>
+        <TextField
+          helperText="Source"
+          value={state.editedRecipe.source.get()}
+          onChange={handleSourceChange}
+        ></TextField>
+        <TextField
+          helperText="Prep Time"
+          value={state.editedRecipe.prepTime.get()}
+          onChange={handlePrepTimeChange}
+        ></TextField>
+        <TextField
+          helperText="Total Time"
+          value={state.editedRecipe.totalTime.get()}
+          onChange={handleTotalTimeChange}
+        ></TextField>
+        <TextField
+          helperText="Active Cooking Time"
+          value={state.editedRecipe.activeCookingTime.get()}
+          onChange={handleActiveCookingTimeChange}
+        ></TextField>
+        <TextField
+          helperText="Brief Description"
+          value={state.editedRecipe.briefDescription.get()}
+          onChange={handleBriefDescriptionChange}
+          multiline
+        ></TextField>
+        <EditButtonGroup
+          addNewRecipeStepBlock={addNewRecipeStepBlock}
+          deleteLastRecipeStepBlock={deleteLastRecipeStepBlock}
+          addNewIngredientBlock={addNewIngredientBlock}
+          deleteLastIngredientBlock={deleteLastIngredientBlock}
+        />
+
         <Button onClick={uploadFinishedRecipe}>Upload Recipe</Button>
         <input type="file" onChange={handleImgPreview}></input>
         {tempImagePreview ? (
-          <img src={tempImagePreview} style={{ height: 150, width: 150 }}></img>
+          <Card sx={{ margin: 1, padding: 1, display: "inline-flex" }}>
+            <img
+              src={tempImagePreview}
+              style={{ height: 150, width: 150 }}
+            ></img>
+          </Card>
         ) : null}
         {uploading ? <h3>Uploading, please do not leave the page</h3> : null}
       </Card>

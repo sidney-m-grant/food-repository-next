@@ -8,9 +8,18 @@ import RecipeInputIngredientSubBlock from "./RecipeInputIngredientSubBlock";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
-import { ButtonGroup, Card, Grid, Button, TextField } from "@mui/material";
+import {
+  ButtonGroup,
+  Card,
+  Grid,
+  Button,
+  TextField,
+  List,
+  ListItem,
+} from "@mui/material";
 import { useState as useStateHookstate, none } from "@hookstate/core";
 import { store } from "../store";
+import EditButtonGroup from "../UIComponents/EditButtonGroup";
 
 interface Props {}
 
@@ -21,6 +30,8 @@ const RecipeInputComp: React.FC<Props> = ({}) => {
   const [tempImageFile, setTempImageFile] = useState<File | null>(null);
   const [tempImagePreview, setTempImagePreview] = useState("");
   const [uploading, setUploading] = useState<boolean>(false);
+  const [collectionInput, setCollectionInput] = useState<string>("");
+  const [tagInput, setTagInput] = useState<string>("");
 
   const listRecipeStepBlocks = state.inputRecipe.recipeStepList
     .get()
@@ -82,6 +93,51 @@ const RecipeInputComp: React.FC<Props> = ({}) => {
   const deleteLastIngredientBlock = () => {
     const length = state.inputRecipe.ingredientList.length;
     state.inputRecipe.ingredientList[length - 1].set(none);
+  };
+
+  const handleAddToCollection = () => {
+    if (!collectionInput) return;
+    const length = state.inputRecipe.collections.length;
+    if (state.inputRecipe.collections[0].collectionName.get() === "") {
+      state.inputRecipe.collections[0].collectionName.set(collectionInput);
+    } else {
+      state.inputRecipe.collections[length].set({
+        collectionId: length,
+        collectionName: collectionInput,
+      });
+    }
+    setCollectionInput("");
+  };
+
+  const handleAddToTags = () => {
+    if (!tagInput) return;
+    const length = state.inputRecipe.tags.length;
+    if (state.inputRecipe.tags[0].tagName.get() === "") {
+      state.inputRecipe.tags[0].tagName.set(tagInput);
+    } else {
+      state.inputRecipe.tags[length].set({ tagId: length, tagName: tagInput });
+    }
+    setTagInput("");
+  };
+
+  const handleDeleteLastCollection = () => {
+    const length = state.inputRecipe.collections.length;
+    if (length > 1) {
+      state.inputRecipe.collections[length - 1].set(none);
+    }
+    if (length === 1) {
+      state.inputRecipe.collections[0].collectionName.set("");
+    }
+  };
+
+  const handleDeleteLastTag = () => {
+    const length = state.inputRecipe.tags.length;
+    if (length > 1) {
+      state.inputRecipe.tags[length - 1].set(none);
+    }
+    if (length === 1) {
+      state.inputRecipe.tags[0].tagName.set("");
+    }
   };
 
   const uploadRecipe = async () => {
@@ -171,6 +227,20 @@ const RecipeInputComp: React.FC<Props> = ({}) => {
     state.inputRecipe.briefDescription.set(e.target.value);
   };
 
+  const collectionList = state.inputRecipe.collections
+    .get()
+    .map((collection) => {
+      return (
+        <ListItem key={collection.collectionId}>
+          {collection.collectionName}
+        </ListItem>
+      );
+    });
+
+  const tagList = state.inputRecipe.tags.get().map((tag) => {
+    return <ListItem key={tag.tagId}>{tag.tagName}</ListItem>;
+  });
+
   return (
     <>
       <Card sx={{ margin: 5, padding: 5 }}>
@@ -210,26 +280,41 @@ const RecipeInputComp: React.FC<Props> = ({}) => {
           onChange={handleBriefDescriptionChange}
           multiline
         ></TextField>
-        <ButtonGroup>
-          <Button style={{ fontSize: 12 }} onClick={addNewRecipeStepBlock}>
-            Add New Recipe Step Block
-          </Button>
-          <Button onClick={deleteLastRecipeStepBlock}>
-            Delete Last Recipe Step Block
-          </Button>
-          <Button onClick={addNewIngredientBlock}>
-            Add New Ingredient Block
-          </Button>
-          <Button onClick={deleteLastIngredientBlock}>
-            Delete Last Ingredient Block
-          </Button>
-        </ButtonGroup>
+        <EditButtonGroup
+          addNewIngredientBlock={addNewIngredientBlock}
+          addNewRecipeStepBlock={addNewRecipeStepBlock}
+          deleteLastIngredientBlock={deleteLastIngredientBlock}
+          deleteLastRecipeStepBlock={deleteLastRecipeStepBlock}
+        />
         <Button onClick={uploadRecipe}>Upload Recipe</Button>
         <input type="file" onChange={handleImgPreview}></input>
         {tempImagePreview ? (
           <img src={tempImagePreview} style={{ height: 150, width: 150 }}></img>
         ) : null}
         {uploading ? <h3>Uploading, please do not leave the page</h3> : null}
+      </Card>
+      <Card sx={{ margin: 5, padding: 5 }}>
+        <TextField
+          onChange={(e) => setCollectionInput(e.target.value)}
+          value={collectionInput}
+          helperText="Collection"
+        />
+        <Button onClick={handleAddToCollection}>Add To Collection</Button>
+        <Button onClick={handleDeleteLastCollection}>
+          Delete Last Collection
+        </Button>
+
+        <TextField
+          onChange={(e) => setTagInput(e.target.value)}
+          value={tagInput}
+          helperText="Tags"
+        ></TextField>
+        <Button onClick={handleAddToTags}>Add To Tags</Button>
+        <Button onClick={handleDeleteLastTag}>Delete Last Tag</Button>
+        <List>
+          {state.inputRecipe.collections.get() ? collectionList : null}
+        </List>
+        <List>{state.inputRecipe.tags.get() ? tagList : null}</List>
       </Card>
       <Card sx={{ margin: 5, padding: 5 }}>
         <Grid container spacing={0}>

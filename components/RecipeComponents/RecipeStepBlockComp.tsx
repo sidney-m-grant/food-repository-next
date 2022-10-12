@@ -1,9 +1,5 @@
-import React, { useState } from "react";
-import type {
-  RecipeStepBlock,
-  Recipe,
-  RecipeStep,
-} from "../../pages/recipeList";
+import React from "react";
+import type { RecipeStepBlock, RecipeStep } from "../store";
 import { Card } from "@mui/material";
 
 interface Props {
@@ -11,10 +7,7 @@ interface Props {
   recipeStepList: RecipeStepBlock[];
 }
 
-const RecipeStepBlockComp: React.FC<Props> = ({
-  stepBlock,
-  recipeStepList,
-}) => {
+const RecipeStepBlockComp: React.FC<Props> = ({ stepBlock }) => {
   const listRecipeSteps = stepBlock.steps.map((item: RecipeStep) => {
     return (
       <h5 key={item.recipeStepNumber}>

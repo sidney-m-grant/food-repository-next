@@ -17,47 +17,12 @@ import Fuse from "fuse.js";
 import Link from "next/link";
 import EditRecipe from "../components/EditInputComponents/EditRecipe";
 import { deleteObject, ref } from "firebase/storage";
-import { List, TextField, Card, Button } from "@mui/material";
+import { List, TextField, Card, Button, Drawer } from "@mui/material";
 import { useState as useStateHookstate } from "@hookstate/core";
 import { store, dummyRecipe } from "../components/store";
-
-export type RecipeStep = {
-  recipeStepText: string;
-  recipeStepNumber: number;
-};
-
-export type RecipeStepBlock = {
-  for: string;
-  steps: RecipeStep[];
-  blockNumber: number;
-};
-
-export type IngredientBlock = {
-  for: string;
-  ingredients: Ingredient[];
-  blockNumber: number;
-};
-
-export type Ingredient = {
-  ingredientName: string;
-  ingredientAmount: string;
-  ingredientUnit: string;
-  ingredientId: number;
-};
-
-export type Recipe = {
-  recipeName: string;
-  docId?: string;
-  recipeStepList: RecipeStepBlock[];
-  ingredientList: IngredientBlock[];
-  imgPath?: string;
-  prepTime?: string;
-  activeCookingTime?: string;
-  totalTime?: string;
-  servesAmount?: string;
-  source?: string;
-  briefDescription?: string;
-};
+import type { Recipe } from "../components/store";
+import RecipeCollectionForDrawer from "../components/UIComponents/RecipeCollectionForDrawer";
+import RecipeTagForDrawer from "../components/UIComponents/RecipeTagForDrawer";
 
 export const RecipeList = () => {
   const router = useRouter();
@@ -71,10 +36,12 @@ export const RecipeList = () => {
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const [recipeToDelete, setRecipeToDelete] = useState<Recipe>(dummyRecipe);
-  const [toggleRecipeBox, setToggleRecipeBox] = useState<
-    string | null | undefined
-  >(null);
   const [toggleFetchRecipes, setToggleFetchRecipes] = useState<boolean>(false);
+  const [toggleDrawer, setToggleDrawer] = useState<boolean>(false);
+  const [selectedCollection, setSelectedCollection] = useState<string>("");
+  const [selectedTag, setSelectedTag] = useState<string>("");
+  const [allCollections, setAllCollections] = useState<string[]>([]);
+  const [allTags, setAllTags] = useState<string[]>([]);
 
   // on rendering, fetch the users friend list users email is already contained in the friend list at index 0
   // must stay in the array in order to have your own recipes available as a radio option
@@ -94,6 +61,8 @@ export const RecipeList = () => {
   // also attaches the auto generated docId from firestore to each recipe for use when editing
   useEffect(() => {
     const getRecipes = async () => {
+      const collectionsTemp: string[] = [];
+      const tagsTemp: string[] = [];
       const recipes = await getDocs(
         collection(db, selectedOption, "recipeCollection", "recipes")
       );
@@ -115,9 +84,23 @@ export const RecipeList = () => {
           servesAmount: recipe.servesAmount,
           source: recipe.source,
           briefDescription: recipe.briefDescription,
+          collections: recipe.collections,
+          tags: recipe.tags,
         };
+        for (let i = 0; i < temp.collections.length; i++) {
+          if (!collectionsTemp.includes(temp.collections[i].collectionName)) {
+            collectionsTemp.push(temp.collections[i].collectionName);
+          }
+        }
+        for (let i = 0; i < temp.tags.length; i++) {
+          if (!tagsTemp.includes(temp.tags[i].tagName)) {
+            tagsTemp.push(temp.tags[i].tagName);
+          }
+        }
         recipeArray.push(temp);
       });
+      setAllCollections(collectionsTemp);
+      setAllTags(tagsTemp);
       setAllRecipes(recipeArray);
     };
     getRecipes();
@@ -158,15 +141,27 @@ export const RecipeList = () => {
     ? results.map((result) => result.item)
     : allRecipes;
 
+  const recipeResultsFilteredByCollection = selectedCollection
+    ? recipeResults.filter((recipe) => {
+        return recipe.collections.some(
+          ({ collectionName }) => collectionName === selectedCollection
+        );
+      })
+    : recipeResults;
+
+  const recipeResultsFilteredByTag = selectedTag
+    ? recipeResultsFilteredByCollection.filter((recipe) => {
+        return recipe.tags.some(({ tagName }) => tagName === selectedTag);
+      })
+    : recipeResultsFilteredByCollection;
+
   // maps out each individual recipe from the given list
-  const listItems = recipeResults.map((recipe: Recipe) => {
+  const listItems = recipeResultsFilteredByTag.map((recipe: Recipe) => {
     return (
       <IndividualRecipe
         recipe={recipe}
         key={allRecipes.indexOf(recipe)}
         setRecipeToDelete={setRecipeToDelete}
-        toggleRecipeBox={toggleRecipeBox}
-        setToggleRecipeBox={setToggleRecipeBox}
       />
     );
   });
@@ -182,18 +177,67 @@ export const RecipeList = () => {
     );
   });
 
-  const handleTest = () => {
-    console.log(state.editedRecipe.get());
+  const handleToggleDrawer = () => {
+    setToggleDrawer((prev) => {
+      return !prev;
+    });
+  };
+
+  const listOfCollections = allCollections.map((collection) => {
+    return (
+      <RecipeCollectionForDrawer
+        collection={collection}
+        key={allCollections[allCollections.indexOf(collection)]}
+        setSelectedCollection={setSelectedCollection}
+        handleToggleDrawer={handleToggleDrawer}
+      />
+    );
+  });
+
+  const listOfTags = allTags.map((tag) => {
+    return (
+      <RecipeTagForDrawer
+        tag={tag}
+        key={allTags[allTags.indexOf(tag)]}
+        setSelectedTag={setSelectedTag}
+        handleToggleDrawer={handleToggleDrawer}
+      />
+    );
+  });
+
+  const handleSetSelectedCollectionToNull = () => {
+    setSelectedCollection("");
+    handleToggleDrawer();
+  };
+
+  const handleSetSelectedTagToNull = () => {
+    setSelectedTag("");
+    handleToggleDrawer();
   };
 
   return (
     <>
+      <Drawer
+        anchor="left"
+        open={toggleDrawer}
+        onClose={handleToggleDrawer}
+        PaperProps={{ style: { width: "20%" } }}
+      >
+        <Button onClick={handleSetSelectedCollectionToNull}>
+          Dont Filter By Collection
+        </Button>
+        {listOfCollections}
+        <Button onClick={handleSetSelectedTagToNull}>Dont Filter By Tag</Button>
+        {listOfTags}
+      </Drawer>
+      <Button onClick={handleToggleDrawer}>Test</Button>
       <Card style={{ width: 217, margin: 10, padding: 10 }}>
         <TextField
           placeholder="Search Bar"
           onChange={(e) => setSearchInput(e.target.value)}
         ></TextField>
       </Card>
+      <List>{listItems}</List>
       <Card style={{ margin: 10, padding: 10 }}>
         {state.currentRecipe.recipeName.get() ? (
           <CurrentRecipe currentRecipe={state.currentRecipe.get()} />
@@ -205,7 +249,6 @@ export const RecipeList = () => {
             toggleFetchRecipes={toggleFetchRecipes}
           />
         ) : null}
-        <List>{listItems}</List>
       </Card>
       <Card style={{ width: 217, margin: 10, padding: 10 }}>
         {listFriendRadioOptions}
@@ -219,7 +262,6 @@ export const RecipeList = () => {
         </Link>
         <SignOutButton />
       </Card>
-      <button onClick={handleTest}>test</button>
     </>
   );
 };

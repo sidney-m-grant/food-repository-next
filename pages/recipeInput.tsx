@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import SignOutButton from "../components/UIComponents/SignOutButton";
 import Link from "next/link";
 import RecipeInputComp from "../components/RecipeInputComponents/RecipeInputComp";
-import { Card, Button, TextField, Grid } from "@mui/material";
+import { Card, Button } from "@mui/material";
 import { store } from "../components/store";
 import { useState as useStateHookstate } from "@hookstate/core";
+import SplitArrayInput from "../components/UIComponents/splitArrayInput";
 
 const forStatementRegex = /^for\b/;
 const unitList = [
@@ -42,7 +43,9 @@ const RecipeInput = () => {
   const state = useStateHookstate(store);
 
   const handleRecipeStepSplit = () => {
+    // takes input in the recipe input, trims any whitespace at the ends, and then splits for every new line
     const tempArray = splitRecipeArrayInput.trim().split(/\n/);
+    // initialize variables
     let firstStep = true;
     let firstBlock = true;
     let counter = 0;
@@ -58,38 +61,44 @@ const RecipeInput = () => {
         blockNumber: 0,
       },
     ];
+    // loop through the input, now seperated by page return
     for (var i = 0; i < tempArray.length; i++) {
       if (
+        // if the first word of the current string is 'for' and it ends in a column...
         tempArray[i].toLowerCase().match(forStatementRegex) &&
         tempArray[i].match(/\:$/)
       ) {
+        // if this is the first 'for', set the statement to the 'for' property of the first block
         if (firstBlock === true) {
           tempRecipeStepSplitList[0] = {
             for: tempArray[i],
-            blockNumber: 0,
             steps: [
               {
                 recipeStepNumber: 1,
                 recipeStepText: "",
               },
             ],
+            blockNumber: 0,
           };
           firstBlock = false;
         } else {
+          // otherwise, set the statement as the 'for property of the second block, and all further statements
+          // untill the next for statement will be assigned to that block
           counter++;
           tempRecipeStepSplitList[counter] = {
             for: tempArray[i],
-            blockNumber: counter,
             steps: [
               {
                 recipeStepNumber: 1,
                 recipeStepText: "",
               },
             ],
+            blockNumber: counter,
           };
           firstStep = true;
         }
       } else {
+        // if its the first step after a for loop, set the first step
         if (firstStep === true) {
           tempRecipeStepSplitList[counter].steps[0] = {
             recipeStepNumber: 1,
@@ -97,6 +106,7 @@ const RecipeInput = () => {
           };
           firstStep = false;
         } else {
+          // otherwise, continue to add to the current block
           tempRecipeStepSplitList[counter].steps[
             tempRecipeStepSplitList[counter].steps.length
           ] = {
@@ -139,30 +149,30 @@ const RecipeInput = () => {
         if (firstBlock === true) {
           tempIngredientSplitList[0] = {
             for: tempArray[i],
-            blockNumber: 0,
             ingredients: [
               {
                 ingredientAmount: "",
+                ingredientId: 1,
                 ingredientName: "",
                 ingredientUnit: "",
-                ingredientId: 1,
               },
             ],
+            blockNumber: 0,
           };
           firstBlock = false;
         } else {
           counter++;
           tempIngredientSplitList[counter] = {
             for: tempArray[i],
-            blockNumber: counter,
             ingredients: [
               {
                 ingredientAmount: "",
+                ingredientId: 1,
                 ingredientName: "",
                 ingredientUnit: "",
-                ingredientId: 1,
               },
             ],
+            blockNumber: counter,
           };
           firstIngredient = true;
           console.log(counter);
@@ -234,56 +244,12 @@ const RecipeInput = () => {
       <Card sx={{ padding: 1, margin: 1, width: 250 }}>
         <Button onClick={handleSplit}>Upload Split</Button>
       </Card>
-      <Card>
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Grid item xs={6}>
-            <Card
-              sx={{
-                margin: 1,
-                padding: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                multiline
-                onChange={(e) => setSplitRecipeArrayInput(e.target.value)}
-                value={splitRecipeArrayInput}
-                helperText="Recipe"
-                sx={{ width: 0.9 }}
-              />
-            </Card>
-          </Grid>
-          <Grid item xs={6}>
-            <Card
-              sx={{
-                margin: 1,
-                padding: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                multiline
-                onChange={(e) => setSplitIngredientArrayInput(e.target.value)}
-                value={splitIngredientArrayInput}
-                helperText="Ingredients"
-                sx={{ width: 0.9 }}
-              />
-            </Card>
-          </Grid>
-        </Grid>
-      </Card>
+      <SplitArrayInput
+        splitIngredientArrayInput={splitIngredientArrayInput}
+        splitRecipeArrayInput={splitRecipeArrayInput}
+        setSplitIngredientArrayInput={setSplitIngredientArrayInput}
+        setSplitRecipeArrayInput={setSplitRecipeArrayInput}
+      />
     </>
   );
 };
