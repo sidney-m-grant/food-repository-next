@@ -9,10 +9,13 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 interface Props {
   recipe: Recipe;
-  setRecipeToDelete: React.Dispatch<React.SetStateAction<Recipe>>;
+  handleDeleteRecipeClick: (recipe: Recipe) => void;
 }
 
-const IndividualRecipe: React.FC<Props> = ({ recipe, setRecipeToDelete }) => {
+const IndividualRecipe: React.FC<Props> = ({
+  recipe,
+  handleDeleteRecipeClick,
+}) => {
   const state = useStateHookstate(store);
 
   const handleCurrentRecipeClick = () => {
@@ -25,14 +28,14 @@ const IndividualRecipe: React.FC<Props> = ({ recipe, setRecipeToDelete }) => {
     state.editedRecipe.set(recipe);
   };
 
-  const handleDeleteRecipeClick = async () => {
+  const handleHandleDeleteRecipeClick = () => {
     if (state.currentRecipe.get() === recipe) {
       state.currentRecipe.set(dummyRecipe);
     }
     if (state.editedRecipe.get() === recipe) {
       state.editedRecipe.set(dummyRecipe);
     }
-    setRecipeToDelete(recipe);
+    handleDeleteRecipeClick(recipe);
   };
 
   return (
@@ -43,7 +46,7 @@ const IndividualRecipe: React.FC<Props> = ({ recipe, setRecipeToDelete }) => {
       <IconButton onClick={handleEditedRecipeClick}>
         <EditIcon></EditIcon>
       </IconButton>
-      <IconButton onClick={handleDeleteRecipeClick}>
+      <IconButton onClick={handleHandleDeleteRecipeClick}>
         <RemoveCircleIcon></RemoveCircleIcon>
       </IconButton>
       <h5

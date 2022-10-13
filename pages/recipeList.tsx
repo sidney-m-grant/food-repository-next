@@ -35,7 +35,6 @@ export const RecipeList = () => {
   const [selectedOption, setSelectedOption] = useState<string>(user.email);
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
-  const [recipeToDelete, setRecipeToDelete] = useState<Recipe>(dummyRecipe);
   const [toggleFetchRecipes, setToggleFetchRecipes] = useState<boolean>(false);
   const [toggleDrawer, setToggleDrawer] = useState<boolean>(false);
   const [selectedCollection, setSelectedCollection] = useState<string>("");
@@ -117,19 +116,19 @@ export const RecipeList = () => {
     await deleteObject(deleteRef);
   };
 
-  useEffect(() => {
-    if (recipeToDelete.docId) {
-      if (confirm("are you sure you want to delete")) {
-        deleteRecipe(recipeToDelete.docId);
-        if (recipeToDelete.imgPath) {
-          deleteImage(recipeToDelete.imgPath);
-        }
-        setAllRecipes((recipes) =>
-          recipes.filter((recipe) => recipe.docId != recipeToDelete.docId)
-        );
+  const handleDeleteRecipeClick = (delRecipe: Recipe) => {
+    if (confirm("Are you sure you want to delete")) {
+      if (delRecipe.imgPath) {
+        deleteImage(delRecipe.imgPath);
       }
+      if (delRecipe.docId) {
+        deleteRecipe(delRecipe.docId);
+      }
+      setAllRecipes((recipes) =>
+        recipes.filter((recipe) => recipe.docId != delRecipe.docId)
+      );
     }
-  }, [recipeToDelete]);
+  };
 
   // search bar, can search by recipe name or the name of any ingredient
   const fuse = new Fuse(allRecipes, {
@@ -161,7 +160,7 @@ export const RecipeList = () => {
       <IndividualRecipe
         recipe={recipe}
         key={allRecipes.indexOf(recipe)}
-        setRecipeToDelete={setRecipeToDelete}
+        handleDeleteRecipeClick={handleDeleteRecipeClick}
       />
     );
   });

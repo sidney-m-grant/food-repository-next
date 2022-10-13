@@ -61,7 +61,7 @@ const Social = () => {
         alert("friend request sent previously");
         return;
       } else {
-        friendRequestArray.push(`${user?.email}`);
+        friendRequestArray.push(`${user.email}`);
         const objectToUpload = {
           friendRequests: friendRequestArray,
         };
@@ -76,13 +76,13 @@ const Social = () => {
   const acceptFriendRequest = async (friend: string) => {
     try {
       const friendsRequestObject = await getDoc(
-        doc(db, `${user?.email}`, "social", "socialItems", "friendRequestArray")
+        doc(db, `${user.email}`, "social", "socialItems", "friendRequestArray")
       );
       let friendRequestArray: string[] = friendsRequestObject
         .data()
         ?.friendRequests.filter((request: string) => request !== friend);
       const friendsObject = await getDoc(
-        doc(db, `${user?.email}`, "social", "socialItems", "friendListArray")
+        doc(db, `${user.email}`, "social", "socialItems", "friendListArray")
       );
       let friendsArray: string[] = friendsObject.data()?.friendList;
       friendsArray.push(friend);
@@ -94,11 +94,11 @@ const Social = () => {
       friendsFriendListArray.push(user.email);
       setListOfFriends(friendsArray);
       setListOfFriendRequests(friendRequestArray);
-      uploadFriendRequestUpdate(user?.email, {
+      uploadFriendRequestUpdate(user.email, {
         friendRequests: friendRequestArray,
       });
       uploadFriendListUpdate(friend, { friendList: friendsFriendListArray });
-      uploadFriendListUpdate(user?.email, { friendList: friendsArray });
+      uploadFriendListUpdate(user.email, { friendList: friendsArray });
       alert("friend request accepted");
     } catch {
       alert("something went wrong");
@@ -108,25 +108,25 @@ const Social = () => {
   useEffect(() => {
     const getFriendList = async () => {
       const friendListObject = await getDoc(
-        doc(db, user?.email, "social", "socialItems", "friendListArray")
+        doc(db, user.email, "social", "socialItems", "friendListArray")
       );
       const friendListArray = friendListObject.data()?.friendList;
       setListOfFriends(friendListArray);
     };
     getFriendList();
-  }, []);
+  }, [user.email]);
 
   useEffect(() => {
     const getFriendRequestList = async () => {
       const friendRequestRecievedObject = await getDoc(
-        doc(db, user?.email, "social", "socialItems", "friendRequestArray")
+        doc(db, user.email, "social", "socialItems", "friendRequestArray")
       );
       const friendRequestRecievedArray =
         friendRequestRecievedObject.data()?.friendRequests;
       setListOfFriendRequests(friendRequestRecievedArray);
     };
     getFriendRequestList();
-  }, []);
+  }, [user.email]);
 
   const friendRequestList = listOfFriendRequests.map((request: string) => {
     return (
