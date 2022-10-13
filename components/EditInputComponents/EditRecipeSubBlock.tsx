@@ -1,10 +1,9 @@
-import { Card, IconButton, TextField, Tooltip, Button } from "@mui/material";
+import { Card, IconButton, TextField, Tooltip } from "@mui/material";
 import React from "react";
-import type { RecipeStepBlock, Recipe } from "../../pages/recipeList";
 import EditRecipeSub from "./EditRecipeSub";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import { store } from "../store";
+import { store, RecipeStepBlock } from "../store";
 import { useState as useStateHookstate, none } from "@hookstate/core";
 
 interface Props {

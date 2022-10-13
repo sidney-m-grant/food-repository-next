@@ -1,8 +1,7 @@
 import { TextField } from "@mui/material";
 import React from "react";
-import { Ingredient, IngredientBlock } from "../../pages/recipeList";
 import { useState as useStateHookstate } from "@hookstate/core";
-import { store } from "../store";
+import { store, Ingredient, IngredientBlock } from "../store";
 
 interface Props {
   ingredient: Ingredient;

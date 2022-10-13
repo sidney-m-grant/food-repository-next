@@ -1,7 +1,6 @@
 import { TextField } from "@mui/material";
 import React from "react";
-import type { RecipeStep, RecipeStepBlock } from "../../pages/recipeList";
-import { store } from "../store";
+import { store, RecipeStep, RecipeStepBlock } from "../store";
 import { useState as useStateHookstate } from "@hookstate/core";
 
 interface Props {

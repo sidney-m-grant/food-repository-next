@@ -5,7 +5,7 @@ import RecipeInputComp from "../components/RecipeInputComponents/RecipeInputComp
 import { Card, Button } from "@mui/material";
 import { store } from "../components/store";
 import { useState as useStateHookstate } from "@hookstate/core";
-import SplitArrayInput from "../components/UIComponents/splitArrayInput";
+import SplitArrayInput from "../components/UIComponents/SplitArrayInput";
 
 const forStatementRegex = /^for\b/;
 const unitList = [

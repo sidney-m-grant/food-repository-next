@@ -8,7 +8,7 @@ import SignOutButton from "../components/UIComponents/SignOutButton";
 import Link from "next/link";
 import { Card, TextField, Typography, Button } from "@mui/material";
 
-const social = () => {
+const Social = () => {
   const router = useRouter();
   const { user } = useAuth();
 
@@ -39,6 +39,10 @@ const social = () => {
   };
 
   const sendFriendRequest = async () => {
+    if (!friendRequestInput) {
+      alert("please input a valid email address");
+      return;
+    }
     const checkIfFriendExists = await getDocs(
       collection(db, friendRequestInput)
     );
@@ -173,4 +177,4 @@ const social = () => {
   );
 };
 
-export default social;
+export default Social;

@@ -1,11 +1,10 @@
 import { Card, TextField, Tooltip, IconButton, Button } from "@mui/material";
 import React, { useState } from "react";
-import type { IngredientBlock } from "../../pages/recipeList";
 import RecipeInputIngredientSub from "./RecipeInputIngredientSub";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { useState as useStateHookstate, none } from "@hookstate/core";
-import { store } from "../store";
+import { store, IngredientBlock } from "../store";
 
 interface Props {
   ingredientBlock: IngredientBlock;

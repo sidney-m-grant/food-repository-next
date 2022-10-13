@@ -55,7 +55,7 @@ export const RecipeList = () => {
       setListOfFriends(friendListArray);
     };
     getFriendList();
-  }, []);
+  }, [user.email]);
 
   // fetch recipe list from a user based on radio input of the user and his friends
   // also attaches the auto generated docId from firestore to each recipe for use when editing

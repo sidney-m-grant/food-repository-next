@@ -5,7 +5,7 @@ import { setDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import { Button, Card, CardContent, Grid, TextField } from "@mui/material";
 
-export default function signIn() {
+export default function SignIn() {
   const { user, signup, login, logout } = useAuth();
 
   const [registerEmail, setRegisterEmail] = useState("");
