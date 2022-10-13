@@ -233,10 +233,10 @@ const RecipeInput = () => {
     <>
       <RecipeInputComp />
       <Card style={{ width: 250, margin: 10, padding: 10 }}>
-        <Link href="/recipeList">
+        <Link href="/RecipeList">
           <Button>To Recipe List</Button>
         </Link>
-        <Link href="/social">
+        <Link href="/Social">
           <Button>To Social</Button>
         </Link>
         <SignOutButton />

@@ -47,7 +47,7 @@ export default function SignIn() {
         doc(db, registerEmail, "recipeCollection"),
         recipeCollection
       );
-      router.push("/recipeList");
+      router.push("/RecipeList");
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +57,7 @@ export default function SignIn() {
     try {
       await login(loginEmail, loginPassword);
       console.log(user);
-      router.push("/recipeList");
+      router.push("/RecipeList");
     } catch (error) {
       console.log(error);
     }
@@ -65,7 +65,7 @@ export default function SignIn() {
 
   const alreadySignedIn = () => {
     if (user) {
-      router.push("/recipeList");
+      router.push("/RecipeList");
     } else {
       console.log("not signed in");
     }

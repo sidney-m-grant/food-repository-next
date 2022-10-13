@@ -253,10 +253,10 @@ export const RecipeList = () => {
         {listFriendRadioOptions}
       </Card>
       <Card style={{ width: 250, margin: 10, padding: 10 }}>
-        <Link href="/recipeInput">
+        <Link href="/RecipeInput">
           <Button>To Recipe Input</Button>
         </Link>
-        <Link href="/social">
+        <Link href="/Social">
           <Button>To Social</Button>
         </Link>
         <SignOutButton />

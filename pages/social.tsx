@@ -165,10 +165,10 @@ const Social = () => {
       </Card>
 
       <Card style={{ width: 250, margin: 10, padding: 10 }}>
-        <Link href="/recipeInput">
+        <Link href="/RecipeInput">
           <Button>To Recipe Input</Button>
         </Link>
-        <Link href="/recipeList">
+        <Link href="/RecipeList">
           <Button>To Recipe List</Button>
         </Link>
         <SignOutButton />

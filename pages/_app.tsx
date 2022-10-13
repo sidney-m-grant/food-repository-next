@@ -5,7 +5,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import { useRouter } from "next/router";
 import { createTheme, ThemeProvider } from "@mui/material";
 
-const noAuthRequired = ["/signIn"];
+const noAuthRequired = ["/SignIn"];
 
 const theme = createTheme({
   palette: {
