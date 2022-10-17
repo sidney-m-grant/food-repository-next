@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CurrentRecipe from "../RecipeComponents/CurrentRecipe";
 import { addDoc, collection } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
@@ -12,6 +12,7 @@ import { Card, Grid, Button, TextField, List, ListItem } from "@mui/material";
 import { useState as useStateHookstate, none } from "@hookstate/core";
 import { store } from "../store";
 import EditButtonGroup from "../UIComponents/EditButtonGroup";
+import clone from "just-clone";
 
 interface Props {}
 
@@ -138,9 +139,10 @@ const RecipeInputComp: React.FC<Props> = ({}) => {
       state.inputRecipe.recipeStepList.get().length > 0 &&
       state.inputRecipe.ingredientList.get().length > 0
     ) {
-      setUploading(true);
       if (confirm("Upload Recipe?")) {
+        setUploading(true);
         if (tempImageFile) {
+          let tempObject = clone(state.inputRecipe.get());
           const imageRef = ref(
             storage,
             `${user?.email}/${tempImageFile.name + v4()}`
@@ -150,7 +152,19 @@ const RecipeInputComp: React.FC<Props> = ({}) => {
             success(result) {
               uploadBytes(imageRef, result)
                 .then((snapshot) => getDownloadURL(snapshot.ref))
-                .then((url) => state.inputRecipe.imgPath.set(url));
+                .then((url) => (tempObject.imgPath = url))
+                .then(() =>
+                  addDoc(
+                    collection(
+                      db,
+                      `${user?.email}`,
+                      "recipeCollection",
+                      "recipes"
+                    ),
+                    tempObject
+                  )
+                )
+                .then(() => setUploading(false));
             },
           });
         } else {
@@ -167,15 +181,6 @@ const RecipeInputComp: React.FC<Props> = ({}) => {
     setTempImageFile(e.target.files[0]);
     setTempImagePreview(URL.createObjectURL(e.target.files[0]));
   };
-
-  useEffect(() => {
-    if (uploading) {
-      addDoc(
-        collection(db, `${user?.email}`, "recipeCollection", "recipes"),
-        state.inputRecipe.get()
-      ).then(() => setUploading(false));
-    }
-  }, [state.inputRecipe.imgPath.get()]);
 
   const handleNameChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -295,7 +300,6 @@ const RecipeInputComp: React.FC<Props> = ({}) => {
         <Button onClick={handleDeleteLastCollection}>
           Delete Last Collection
         </Button>
-
         <TextField
           onChange={(e) => setTagInput(e.target.value)}
           value={tagInput}
