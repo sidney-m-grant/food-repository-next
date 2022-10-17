@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CurrentRecipe from "../RecipeComponents/CurrentRecipe";
 import { setDoc, doc } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
@@ -13,10 +13,11 @@ import EditRecipeSubBlock from "./EditRecipeSubBlock";
 import EditIngredientSubBlock from "./EditIngredientSubBlock";
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
-import { Card, Button, TextField } from "@mui/material";
+import { Card, Button, TextField, Grid } from "@mui/material";
 import { useState as useStateHookstate, none } from "@hookstate/core";
 import { store } from "../store";
 import EditButtonGroup from "../UIComponents/EditButtonGroup";
+import clone from "just-clone";
 
 interface Props {
   toggleFetchRecipes: boolean;
@@ -107,34 +108,53 @@ const EditRecipe: React.FC<Props> = ({
       state.editedRecipe.ingredientList.get().length > 0 &&
       state.editedRecipe.recipeStepList.get().length > 0
     ) {
-      setUploading(true);
-      if (tempImageFile) {
-        if (state.editedRecipe.imgPath.get()) {
-          deleteImage(state.editedRecipe.imgPath.get());
+      if (confirm("Upload edited Recipe?")) {
+        setUploading(true);
+        if (tempImageFile) {
+          const imgToDelete = state.editedRecipe.imgPath.get();
+          let tempObject = clone(state.editedRecipe.get());
+          const imageRef = ref(
+            storage,
+            `${user?.email}/${tempImageFile.name + v4()}`
+          );
+          new Compressor(tempImageFile, {
+            quality: 0.4,
+            success(result) {
+              uploadBytes(imageRef, result)
+                .then((snapshot) => getDownloadURL(snapshot.ref))
+                .then((url) => (tempObject.imgPath = url))
+                .then(() =>
+                  setDoc(
+                    doc(
+                      db,
+                      `${user?.email}`,
+                      "recipeCollection",
+                      "recipes",
+                      `${tempObject.docId}`
+                    ),
+                    tempObject
+                  )
+                );
+            },
+          });
+          if (imgToDelete) {
+            deleteImage(imgToDelete);
+          }
+          setToggleFetchRecipes(!toggleFetchRecipes);
+          setUploading(false);
+        } else {
+          setDoc(
+            doc(
+              db,
+              `${user?.email}`,
+              "recipeCollection",
+              "recipes",
+              `${state.editedRecipe.docId.get()}`
+            ),
+            state.editedRecipe.get()
+          ).then(() => setUploading(false));
+          setToggleFetchRecipes(!toggleFetchRecipes);
         }
-        const imageRef = ref(
-          storage,
-          `${user?.email}/${tempImageFile.name + v4()}`
-        );
-        new Compressor(tempImageFile, {
-          quality: 0.4,
-          success(result) {
-            uploadBytes(imageRef, result)
-              .then((snapshot) => getDownloadURL(snapshot.ref))
-              .then((url) => state.editedRecipe.imgPath.set(url));
-          },
-        });
-      } else {
-        setDoc(
-          doc(
-            db,
-            `${user?.email}`,
-            "recipeCollection",
-            "recipes",
-            `${state.editedRecipe.docId.get()}`
-          ),
-          state.editedRecipe.get()
-        ).then(() => setUploading(false));
       }
     } else {
       alert(
@@ -142,22 +162,6 @@ const EditRecipe: React.FC<Props> = ({
       );
     }
   };
-
-  useEffect(() => {
-    if (uploading) {
-      setDoc(
-        doc(
-          db,
-          `${user?.email}`,
-          "recipeCollection",
-          "recipes",
-          `${state.editedRecipe.docId.get()}`
-        ),
-        state.editedRecipe.get()
-      ).then(() => setToggleFetchRecipes(!toggleFetchRecipes));
-      setUploading(false);
-    }
-  }, [state.editedRecipe.imgPath.get()]);
 
   const handleImgPreview = (e: any) => {
     if (e.target.files[0]) {
@@ -261,10 +265,20 @@ const EditRecipe: React.FC<Props> = ({
         ) : null}
         {uploading ? <h3>Uploading, please do not leave the page</h3> : null}
       </Card>
-      <div className="recipe-container">
-        <div className="ingredient-list">{listIngredientBlocks}</div>
-        <div className="recipe-steps">{listRecipeStepBlocks}</div>
-      </div>
+      <Card sx={{ margin: 5, padding: 5 }}>
+        <Grid container spacing={0}>
+          <Grid item xs={7}>
+            {state.editedRecipe.ingredientList.get()
+              ? listIngredientBlocks
+              : null}
+          </Grid>
+          <Grid item xs={5}>
+            {state.editedRecipe.recipeStepList.get()
+              ? listRecipeStepBlocks
+              : null}
+          </Grid>
+        </Grid>
+      </Card>
       <CurrentRecipe currentRecipe={state.editedRecipe.get()} />
     </>
   );

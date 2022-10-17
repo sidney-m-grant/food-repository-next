@@ -41,6 +41,7 @@ export const RecipeList = () => {
   const [selectedTag, setSelectedTag] = useState<string>("");
   const [allCollections, setAllCollections] = useState<string[]>([]);
   const [allTags, setAllTags] = useState<string[]>([]);
+  const [displayEdits, setDisplayEdit] = useState<boolean>(false);
 
   // on rendering, fetch the users friend list users email is already contained in the friend list at index 0
   // must stay in the array in order to have your own recipes available as a radio option
@@ -161,6 +162,7 @@ export const RecipeList = () => {
         recipe={recipe}
         key={allRecipes.indexOf(recipe)}
         handleDeleteRecipeClick={handleDeleteRecipeClick}
+        setDisplayEdit={setDisplayEdit}
       />
     );
   });
@@ -238,11 +240,10 @@ export const RecipeList = () => {
       </Card>
       <List>{listItems}</List>
       <Card style={{ margin: 10, padding: 10 }}>
-        {state.currentRecipe.recipeName.get() ? (
+        {!displayEdits ? (
           <CurrentRecipe currentRecipe={state.currentRecipe.get()} />
         ) : null}
-        {state.editedRecipe.recipeName.get() &&
-        !state.currentRecipe.recipeName.get() ? (
+        {displayEdits ? (
           <EditRecipe
             setToggleFetchRecipes={setToggleFetchRecipes}
             toggleFetchRecipes={toggleFetchRecipes}
