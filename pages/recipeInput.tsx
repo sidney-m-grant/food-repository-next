@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SignOutButton from "../components/UIComponents/SignOutButton";
 import Link from "next/link";
 import RecipeInputComp from "../components/RecipeInputComponents/RecipeInputComp";
-import { Card, Button } from "@mui/material";
+import { Card, Button, TextField } from "@mui/material";
 import { store } from "../components/store";
 import { useState as useStateHookstate } from "@hookstate/core";
 import SplitArrayInput from "../components/UIComponents/SplitArrayInput";
@@ -39,12 +39,19 @@ const RecipeInput = () => {
     useState<string>("");
   const [splitRecipeArrayInput, setSplitRecipeArrayInput] =
     useState<string>("");
+  const [urlToScrape, setUrlToScrape] = useState<string>("");
 
   const state = useStateHookstate(store);
 
-  const handleRecipeStepSplit = () => {
+  const handleSplitBlockOfText = () => {
+    const tempRecipeSplit = splitRecipeArrayInput.trim().split(/\n/);
+    const tempIngredientSplit = splitIngredientArrayInput.trim().split(/\n/);
+    handleRecipeStepSplit(tempRecipeSplit);
+    handleIngredientSplit(tempIngredientSplit);
+  };
+
+  const handleRecipeStepSplit = (tempArray: string[]) => {
     // takes input in the recipe input, trims any whitespace at the ends, and then splits for every new line
-    const tempArray = splitRecipeArrayInput.trim().split(/\n/);
     // initialize variables
     let firstStep = true;
     let firstBlock = true;
@@ -119,8 +126,7 @@ const RecipeInput = () => {
     state.inputRecipe.recipeStepList.set(tempRecipeStepSplitList);
   };
 
-  const handleIngredientSplit = () => {
-    const tempArray = splitIngredientArrayInput.trim().split(/\n/);
+  const handleIngredientSplit = (tempArray: string[]) => {
     let tempAmount = "";
     let tempUnit: any = "";
     let tempName = "";
@@ -175,7 +181,6 @@ const RecipeInput = () => {
             blockNumber: counter,
           };
           firstIngredient = true;
-          console.log(counter);
         }
       } else {
         if (firstIngredient === true) {
@@ -224,9 +229,120 @@ const RecipeInput = () => {
     state.inputRecipe.ingredientList.set(tempIngredientSplitList);
   };
 
-  const handleSplit = () => {
-    handleIngredientSplit();
-    handleRecipeStepSplit();
+  const jsonldInstructionParser = (json: any) => {
+    const recipeInstructions: any = [];
+    const recipeSteps: any = [];
+    const recipeIngredients: any = [];
+
+    const getRecipeInstructions = (json: any) => {
+      if (Array.isArray(json)) {
+        json.forEach((element) => getRecipeInstructions(element));
+      } else if ("@graph" in json) {
+        json["@graph"].forEach((element: Object) =>
+          getRecipeInstructions(element)
+        );
+      } else if (json["@type"].includes("Recipe")) {
+        json["recipeInstructions"].forEach((element: Object) =>
+          recipeInstructions.push(element)
+        );
+      }
+    };
+
+    const getRecipeSteps = (recipeInstructions: any) => {
+      recipeInstructions.forEach((element: any) => {
+        if (element["@type"].includes("HowToSection")) {
+          element.itemListElement.forEach((listItem: any) => {
+            recipeSteps.push(listItem.text);
+          });
+        } else if (element["@type"].includes("HowToStep")) {
+          recipeSteps.push(element.text);
+        }
+      });
+    };
+
+    const getRecipeIngredients = (json: any) => {
+      if (Array.isArray(json)) {
+        json.forEach((element) => getRecipeIngredients(element));
+      } else if ("@graph" in json) {
+        json["@graph"].forEach((element: Object) =>
+          getRecipeIngredients(element)
+        );
+      } else if (json["@type"].includes("Recipe")) {
+        json["recipeIngredient"].forEach((element: Object) =>
+          recipeIngredients.push(element)
+        );
+      }
+    };
+
+    const getMiscInfo = (json: any) => {
+      if (Array.isArray(json)) {
+        json.forEach((element) => getMiscInfo(element));
+      } else if ("@graph" in json) {
+        json["@graph"].forEach((element: Object) => getMiscInfo(element));
+      } else if (json["@type"].includes("Recipe")) {
+        if (json["cookTime"]) {
+          state.inputRecipe.activeCookingTime.set(json["cookTime"]);
+        }
+        if (json["description"]) {
+          state.inputRecipe.briefDescription.set(json["description"]);
+        }
+        if (json["prepTime"]) {
+          state.inputRecipe.prepTime.set(json["prepTime"]);
+        }
+        if (json["name"]) {
+          state.inputRecipe.recipeName.set(json["name"]);
+        }
+        if (json["totalTime"]) {
+          state.inputRecipe.totalTime.set(json["totalTime"]);
+        }
+      }
+    };
+
+    getRecipeInstructions(json);
+    getRecipeSteps(recipeInstructions);
+    getMiscInfo(json);
+    return recipeSteps;
+  };
+
+  const jsonldIngredientParser = (json: any) => {
+    const recipeIngredients: any = [];
+
+    const getRecipeIngredients = (json: any) => {
+      if (Array.isArray(json)) {
+        json.forEach((element) => getRecipeIngredients(element));
+      } else if ("@graph" in json) {
+        json["@graph"].forEach((element: Object) =>
+          getRecipeIngredients(element)
+        );
+      } else if (json["@type"].includes("Recipe")) {
+        json["recipeIngredient"].forEach((element: Object) =>
+          recipeIngredients.push(element)
+        );
+      }
+    };
+
+    getRecipeIngredients(json);
+    return recipeIngredients;
+  };
+
+  const jsonldMiscParser = (json: any) => {};
+
+  const runScrape = () => {
+    fetch("/api/scraper", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ url: urlToScrape }),
+    })
+      .then((res) => res.json())
+      .then((metaData) => {
+        const object = JSON.parse(metaData);
+        const recipeIngredients = jsonldIngredientParser(object);
+        const recipeInstructions = jsonldInstructionParser(object);
+        handleIngredientSplit(recipeIngredients);
+        handleRecipeStepSplit(recipeInstructions);
+      });
   };
 
   return (
@@ -242,7 +358,7 @@ const RecipeInput = () => {
         <SignOutButton />
       </Card>
       <Card sx={{ padding: 1, margin: 1, width: 250 }}>
-        <Button onClick={handleSplit}>Upload Split</Button>
+        <Button onClick={handleSplitBlockOfText}>Upload Split</Button>
       </Card>
       <SplitArrayInput
         splitIngredientArrayInput={splitIngredientArrayInput}
@@ -250,6 +366,11 @@ const RecipeInput = () => {
         setSplitIngredientArrayInput={setSplitIngredientArrayInput}
         setSplitRecipeArrayInput={setSplitRecipeArrayInput}
       />
+      <TextField
+        onChange={(e) => setUrlToScrape(e.target.value)}
+        value={urlToScrape}
+      />
+      <Button onClick={runScrape}>Run Scrape</Button>
     </>
   );
 };

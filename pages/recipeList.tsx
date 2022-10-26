@@ -19,12 +19,31 @@ import EditRecipe from "../components/EditInputComponents/EditRecipe";
 import { deleteObject, ref } from "firebase/storage";
 import { List, TextField, Card, Button, Drawer } from "@mui/material";
 import { useState as useStateHookstate } from "@hookstate/core";
-import { store, dummyRecipe } from "../components/store";
+import { store } from "../components/store";
 import type { Recipe } from "../components/store";
 import RecipeCollectionForDrawer from "../components/UIComponents/RecipeCollectionForDrawer";
 import RecipeTagForDrawer from "../components/UIComponents/RecipeTagForDrawer";
+/*
+interface Props {
+  friendListArray: string[];
+}
 
-export const RecipeList = () => {
+export async function getServerSideProps() {
+  const { user } = useAuth();
+  const friendListObject = await getDoc(
+    doc(db, user?.email, "social", "socialItems", "friendListArray")
+  );
+  const friendListArray = friendListObject.data()?.friendList;
+  friendListArray.push(user?.email);
+
+  return { props: { friendListArray } };
+}
+*/
+export const RecipeList /*: React.FC<Props>*/ = (
+  {
+    /*friendListArray*/
+  }
+) => {
   const router = useRouter();
   const { user } = useAuth();
   const state = useStateHookstate(store);

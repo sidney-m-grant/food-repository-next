@@ -13,7 +13,7 @@ import EditRecipeSubBlock from "./EditRecipeSubBlock";
 import EditIngredientSubBlock from "./EditIngredientSubBlock";
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
-import { Card, Button, TextField, Grid } from "@mui/material";
+import { Card, Button, TextField, Grid, List, ListItem } from "@mui/material";
 import { useState as useStateHookstate, none } from "@hookstate/core";
 import { store } from "../store";
 import EditButtonGroup from "../UIComponents/EditButtonGroup";
@@ -34,6 +34,8 @@ const EditRecipe: React.FC<Props> = ({
   const [tempImageFile, setTempImageFile] = useState<File | null>(null);
   const [tempImagePreview, setTempImagePreview] = useState("");
   const [uploading, setUploading] = useState<boolean>(false);
+  const [collectionInput, setCollectionInput] = useState<string>("");
+  const [tagInput, setTagInput] = useState<string>("");
 
   const listRecipeStepBlocks = state.editedRecipe.recipeStepList
     .get()
@@ -56,6 +58,51 @@ const EditRecipe: React.FC<Props> = ({
         />
       );
     });
+
+  const handleAddToCollection = () => {
+    if (!collectionInput) return;
+    const length = state.editedRecipe.collections.length;
+    if (state.editedRecipe.collections[0].collectionName.get() === "") {
+      state.editedRecipe.collections[0].collectionName.set(collectionInput);
+    } else {
+      state.editedRecipe.collections[length].set({
+        collectionId: length,
+        collectionName: collectionInput,
+      });
+    }
+    setCollectionInput("");
+  };
+
+  const handleAddToTags = () => {
+    if (!tagInput) return;
+    const length = state.editedRecipe.tags.length;
+    if (state.editedRecipe.tags[0].tagName.get() === "") {
+      state.editedRecipe.tags[0].tagName.set(tagInput);
+    } else {
+      state.editedRecipe.tags[length].set({ tagId: length, tagName: tagInput });
+    }
+    setTagInput("");
+  };
+
+  const handleDeleteLastCollection = () => {
+    const length = state.editedRecipe.collections.length;
+    if (length > 1) {
+      state.editedRecipe.collections[length - 1].set(none);
+    }
+    if (length === 1) {
+      state.editedRecipe.collections[0].collectionName.set("");
+    }
+  };
+
+  const handleDeleteLastTag = () => {
+    const length = state.editedRecipe.tags.length;
+    if (length > 1) {
+      state.editedRecipe.tags[length - 1].set(none);
+    }
+    if (length === 1) {
+      state.editedRecipe.tags[0].tagName.set("");
+    }
+  };
 
   const addNewRecipeStepBlock = () => {
     const length = state.editedRecipe.recipeStepList.length;
@@ -209,6 +256,20 @@ const EditRecipe: React.FC<Props> = ({
     state.editedRecipe.briefDescription.set(e.target.value);
   };
 
+  const collectionList = state.editedRecipe.collections
+    .get()
+    .map((collection) => {
+      return (
+        <ListItem key={collection.collectionId}>
+          {collection.collectionName}
+        </ListItem>
+      );
+    });
+
+  const tagList = state.editedRecipe.tags.get().map((tag) => {
+    return <ListItem key={tag.tagId}>{tag.tagName}</ListItem>;
+  });
+
   return (
     <>
       <Card>
@@ -264,6 +325,28 @@ const EditRecipe: React.FC<Props> = ({
           </Card>
         ) : null}
         {uploading ? <h3>Uploading, please do not leave the page</h3> : null}
+      </Card>
+      <Card sx={{ margin: 5, padding: 5 }}>
+        <TextField
+          onChange={(e) => setCollectionInput(e.target.value)}
+          value={collectionInput}
+          helperText="Collection"
+        />
+        <Button onClick={handleAddToCollection}>Add To Collection</Button>
+        <Button onClick={handleDeleteLastCollection}>
+          Delete Last Collection
+        </Button>
+        <TextField
+          onChange={(e) => setTagInput(e.target.value)}
+          value={tagInput}
+          helperText="Tags"
+        ></TextField>
+        <Button onClick={handleAddToTags}>Add To Tags</Button>
+        <Button onClick={handleDeleteLastTag}>Delete Last Tag</Button>
+        <List>
+          {state.editedRecipe.collections.get() ? collectionList : null}
+        </List>
+        <List>{state.editedRecipe.tags.get() ? tagList : null}</List>
       </Card>
       <Card sx={{ margin: 5, padding: 5 }}>
         <Grid container spacing={0}>
